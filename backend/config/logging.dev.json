@@ -1,0 +1,89 @@
+{
+    "version": 1,
+    "disable_existing_loggers": false,
+    "formatters": {
+        "standard": {
+            "format": "%(asctime)s | %(levelname)7s | %(name)s | %(module)s.%(funcName)s:%(lineno)d - %(message)s",
+            "use_colors": null
+        },
+        "simple": {
+            "format": "%(levelname)s %(message)s"
+        }
+    },
+    "handlers": {
+        "stderr": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+            "formatter": "standard",
+            "stream": "ext://sys.stderr"
+        },
+        "stdout": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+            "formatter": "standard",
+            "stream": "ext://sys.stdout"
+        },
+        "file": {
+            "level": "INFO",
+            "class": "logging.handlers.TimedRotatingFileHandler",
+            "filename": "./logs/fastapi.log",
+            "when": "MIDNIGHT",
+            "backupCount": 100,
+            "formatter": "standard",
+            "encoding": "utf-8"
+        }
+    },
+    "loggers": {
+        "fastapi": {
+            "handlers": [
+                "stdout",
+                "file"
+            ],
+            "level": "DEBUG"
+        },
+        "tortoise": {
+            "handlers": [
+                "stderr",
+                "file"
+            ],
+            "level": "DEBUG"
+        },
+        "tortoise.db_client": {
+            "handlers": [
+                "stdout",
+                "file"
+            ],
+            "level": "DEBUG"
+        },
+        "apscheduler": {
+            "handlers": [
+                "stdout",
+                "file"
+            ],
+            "level": "DEBUG"
+        },
+        "uvicorn": {
+            "handlers": [
+                "stdout",
+                "file"
+            ],
+            "level": "DEBUG"
+        },
+        "uvicorn.error": {
+            "handlers": [
+                "stderr",
+                "file"
+            ],
+            "level": "INFO",
+            "propagate": false
+        },
+        "uvicorn.access": {
+            "handlers": [
+                "stdout",
+                "file"
+            ],
+            "level": "INFO",
+            "propagate": false
+        }
+    }
+}
