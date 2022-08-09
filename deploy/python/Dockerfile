@@ -9,4 +9,4 @@ WORKDIR /app
 # 拷贝代码
 COPY . /app
 
-ENTRYPOINT ["pytnon","manage.py","run","server"]
+ENTRYPOINT ["python","manage.py","run","server"]
