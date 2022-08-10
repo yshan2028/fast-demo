@@ -14,7 +14,9 @@ from tortoise.exceptions import OperationalError
 from tortoise.transactions import in_transaction
 
 from ..dependencies import check_permissions, filter_users, get_redis, PageSizePaginator
+from ..enums import OperationMethod as OpMethod, OperationObject as OpObject
 from ..models import Role, User
+from ..models.base import OperationLog
 from ..schemas import (AccountCreate, AccountInfo, AccountUpdate, FailResp, PageResp, SingleResp,
                        SuccessResp)
 from ..utils import encrypt_password
@@ -43,7 +45,7 @@ async def get_account_by_id(uid: int = Path(..., gt=0, description='账号ID')):
 
 
 @router.post("", summary="添加用户", dependencies=[Security(check_permissions, scopes=["account_add"])])
-async def account_add(post: AccountCreate):
+async def account_add(req: Request, post: AccountCreate):
     # 过滤用户
     get_user = await User.get_or_none(username=post.username)
     if get_user is not None:
@@ -52,10 +54,14 @@ async def account_add(post: AccountCreate):
 
     # 创建用户
     create_user = await User.create(**post.dict())
+    await OperationLog.add_log(req, req.state.user.id, OpObject.account, OpMethod.create_object,
+                               f"创建账号(ID={create_user.pk})")
     if post.roles:
         # 有分配角色
         roles = await Role.filter(id__in=post.roles, status=True)
         await create_user.role.add(*roles)
+        await OperationLog.add_log(req, req.state.user.id, OpObject.account, OpMethod.allocate_resources,
+                                   f"分配角色(roleIDs={post.roles})")
     return SuccessResp(data=f"账号 {create_user.username} 创建成功")
 
 
@@ -66,11 +72,14 @@ async def account_del(req: Request, uid: int = Path(..., gt=0)):
     delete_action = await User.filter(pk=uid).delete()
     if not delete_action:
         return FailResp(code=20302, msg=f"账号{uid}删除失败!")
+    await OperationLog.add_log(req, req.state.user.id, OpObject.account, OpMethod.delete_object,
+                               f"删除账号(ID={uid})")
     return SuccessResp(data="删除成功")
 
 
 @router.put("/{uid}", summary="修改账号", dependencies=[Security(check_permissions, scopes=["account_update"])])
-async def account_update(post: AccountUpdate, uid: int = Path(..., gt=0), redis: Redis = Depends(get_redis)):
+async def account_update(req: Request, post: AccountUpdate, uid: int = Path(..., gt=0),
+                         redis: Redis = Depends(get_redis)):
     user = await User.get_or_none(pk=uid)
     # 不存在的用户
     if user is None:
@@ -104,6 +113,9 @@ async def account_update(post: AccountUpdate, uid: int = Path(..., gt=0), redis:
                 await user.role.add(*roles)
     except OperationalError:
         return FailResp(code=20503, msg="更新账号信息失败")
+    # 记录你操作日志
+    await OperationLog.add_log(req, req.state.user.id, OpObject.account, OpMethod.update_object,
+                               f"修改账号(ID={uid})")
     # 开始返回信息
     await user.fetch_related('role')
     data = AccountInfo.from_orm(user)

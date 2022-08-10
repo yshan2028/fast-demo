@@ -8,3 +8,4 @@
 # IDE:     PyCharm
 
 from .model import UserGender as UserGender
+from .operation import OperationMethod as OperationMethod, OperationObject as OperationObject

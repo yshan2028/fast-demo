@@ -7,7 +7,7 @@
 # Project: fa-demo
 # IDE:     PyCharm
 from datetime import datetime
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -36,3 +36,14 @@ class MenuItem(ORMModel):
     icon: Optional[str]
     component: Optional[str]
     scopes: Optional[str] = Field(..., alias='permission')
+
+
+class OperationLogItem(ORMModel):
+    id: int
+    user_id: int
+    object_cls: str
+    method: str
+    ip: str
+    remark: str
+    detail: Dict
+    create_time: datetime = Field(..., alias='createTime')

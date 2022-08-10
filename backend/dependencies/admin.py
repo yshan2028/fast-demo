@@ -40,3 +40,20 @@ def filter_roles(role_name: str = Query(None, alias='roleNme'), status: bool = Q
     if create_time:
         query.setdefault('create_time__range', create_time)
     return query
+
+
+def filter_logs(user_id: int = Query(None), object_cls: str = Query(None), method: str = Query(None),
+                ip: str = Query(None),
+                create_time: List[datetime] = Query(None, alias='createTime')):
+    query = {}
+    if user_id:
+        query.setdefault('user_id', user_id)
+    if object_cls:
+        query.setdefault('object_cls', object_cls)
+    if method:
+        query.setdefault('method', method)
+    if ip:
+        query.setdefault('ip__icontains', ip)
+    if create_time:
+        query.setdefault('create_time__range', create_time)
+    return query

@@ -13,9 +13,12 @@ from starlette.requests import Request
 from tortoise.queryset import F
 
 from ..decorators import cache
-from ..dependencies import check_permissions, get_current_active_user, get_redis
+from ..dependencies import (check_permissions, filter_logs, get_current_active_user, get_redis,
+                            PageSizePaginator)
+from ..enums import OperationMethod as OpMethod, OperationObject as OpObject
 from ..models import Access, User
-from ..schemas import FailResp, MenuUpdate, MultiResp, SuccessResp
+from ..models.base import OperationLog
+from ..schemas import FailResp, MenuUpdate, MultiResp, OperationLogItem, PageResp, SuccessResp
 from ..utils import make_tree
 
 router = APIRouter(prefix='/access', tags=['权限管理'])
@@ -91,7 +94,7 @@ async def get_menu_list():
 
 
 @router.put('/menu', summary="修改菜单", dependencies=[Security(check_permissions, scopes=["menu_update"])])
-async def menu_update(post: MenuUpdate, redis: Redis = Depends(get_redis)):
+async def menu_update(req: Request, post: MenuUpdate, redis: Redis = Depends(get_redis)):
     menu = await Access.get_or_none(pk=post.id)
     if menu is None:
         return FailResp(code=30101, msg='菜单项不存在')
@@ -111,5 +114,13 @@ async def menu_update(post: MenuUpdate, redis: Redis = Depends(get_redis)):
         perm_code_key_list = [f"cache:perm_code:{x}" for x in username_list]
         router_tree_key_list = [f"cache:router_tree:{x}" for x in username_list]
         await redis.delete(*perm_code_key_list, *router_tree_key_list)
-
+    await OperationLog.add_log(req, req.state.user.id, OpObject.menu, OpMethod.update_object, f"修改菜单(ID={post.id})")
     return SuccessResp(data='修改菜单成功')
+
+
+@router.get("/operation/logs", summary="查看日志", response_model=PageResp[OperationLogItem],
+            dependencies=[Security(check_permissions, scopes=["logs_list"])])
+async def get_operation_logs(pg: PageSizePaginator = Depends(PageSizePaginator()), filters=Depends(filter_logs)):
+    logs_qs = OperationLog.all()
+    page_data = await pg.output(logs_qs, filters)
+    return PageResp[OperationLogItem](data=page_data)

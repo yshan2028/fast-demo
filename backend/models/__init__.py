@@ -7,8 +7,5 @@
 # Project: fa-demo
 # IDE:     PyCharm
 
-from .base import (Access as Access,
-                   Role as Role,
-                   User as User,
+from .base import (Access as Access, OperationLog as OperationLog, Role as Role, User as User,
                    UserProfile as UserProfile)
-
