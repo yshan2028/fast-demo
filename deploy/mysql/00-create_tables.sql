@@ -1,5 +1,21 @@
 use fa_demo;
 
+create table if not exists operationlog
+(
+    id          int auto_increment
+        primary key,
+    create_time datetime(6) default CURRENT_TIMESTAMP(6) not null comment '创建时间',
+    update_time datetime(6) default CURRENT_TIMESTAMP(6) not null on update CURRENT_TIMESTAMP(6) comment '更新时间',
+    order_no    int         default 999                  null comment '用来排序的序号',
+    status      tinyint(1)  default 1                    not null comment 'True:启用 False:禁用',
+    remark      varchar(255)                             null comment '备注描述',
+    user_id     int                                      not null comment '用户ID',
+    object_cls  varchar(255)                             not null comment '操作对象类',
+    method      varchar(255)                             not null comment '操作方法',
+    ip          varchar(32)                              null comment '访问IP',
+    detail      json                                     not null comment '详细参数'
+);
+
 create table if not exists access
 (
     id                    int auto_increment
