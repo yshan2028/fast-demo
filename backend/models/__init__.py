@@ -11,5 +11,4 @@ from .base import (Access as Access,
                    Role as Role,
                    User as User,
                    UserProfile as UserProfile)
-from .enums import UserGender as UserGender
 

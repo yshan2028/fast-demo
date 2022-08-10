@@ -10,7 +10,7 @@
 from tortoise import fields
 
 from .abc import TortoiseBaseModel
-from .enums import UserGender
+from ..enums import UserGender
 
 
 class User(TortoiseBaseModel):
