@@ -1,4 +1,4 @@
-UPDATE fa_demo.user_role SET user_id = 15, role_id = 1;
-UPDATE fa_demo.user_role SET user_id = 18, role_id = 1;
-UPDATE fa_demo.user_role SET user_id = 18, role_id = 16;
-UPDATE fa_demo.user_role SET user_id = 5, role_id = 16;
+INSERT INTO fa_demo.user_role (user_id, role_id) VALUES (15, 1);
+INSERT INTO fa_demo.user_role (user_id, role_id) VALUES (18, 1);
+INSERT INTO fa_demo.user_role (user_id, role_id) VALUES (18, 16);
+INSERT INTO fa_demo.user_role (user_id, role_id) VALUES (5, 16);
