@@ -8,6 +8,7 @@
 # IDE:     PyCharm
 from .access import (MenuItem as MenuItem,
                      MenuUpdate as MenuUpdate,
+                     OperationLogItem as OperationLogItem,
                      SetAccess as SetAccess)
 from .account import (AccountCreate as AccountCreate,
                       AccountInfo as AccountInfo,

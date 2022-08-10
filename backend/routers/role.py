@@ -11,12 +11,15 @@ from typing import List, Union
 from aioredis import Redis
 from fastapi import APIRouter, Depends, Path, Security
 from pydantic import parse_obj_as
+from starlette.requests import Request
 from tortoise.exceptions import OperationalError
 from tortoise.queryset import F
 from tortoise.transactions import in_transaction
 
 from ..dependencies import check_permissions, filter_roles, get_redis, PageSizePaginator
+from ..enums import OperationMethod as OpMethod, OperationObject as OpObject
 from ..models import Access, Role, User
+from ..models.base import OperationLog
 from ..schemas import (CreateRole, FailResp, MultiResp, PageResp, RoleInfo, RoleInfoOptionItem, RoleStatus, SingleResp,
                        SuccessResp,
                        UpdateRole)
@@ -33,38 +36,44 @@ async def all_roles_options():
 
 
 @router.post("", summary="角色添加", dependencies=[Security(check_permissions, scopes=["role_add"])])
-async def create_role(post: CreateRole):
+async def create_role(req: Request, post: CreateRole):
     role = await Role.create(**post.dict())
+    await OperationLog.add_log(req, req.state.user.id, OpObject.role, OpMethod.create_object,
+                               f"创建角色(ID={role.pk})")
     # 分配权限
     if post.menu_values:
         accesses = await Access.filter(status=True, id__in=post.menu_values).all()
         await role.access.add(*accesses)
+        await OperationLog.add_log(req, req.state.user.id, OpObject.role, OpMethod.allocate_resources,
+                                   f"分配权限({post.menu_values})")
     return SuccessResp(data="创建成功!")
 
 
 @router.put("/status", summary="角色状态", dependencies=[Security(check_permissions, scopes=["role_status"])])
-async def set_role_status(post: RoleStatus):
+async def set_role_status(req: Request, post: RoleStatus):
     role = await Role.get_or_none(pk=post.id)
     if role is None:
         return FailResp(code=30501, msg=f"角色不存在")
     role.status = post.status
     await role.save()
-    msg = f"角色 [{role.role_name}] 已"
+    msg = f"角色 [ID={role.pk}] 已"
     msg += "启用" if post.status else "停用"
+    await OperationLog.add_log(req, req.state.user.id, OpObject.role, OpMethod.change_status, msg)
     return SuccessResp(data=msg)
 
 
 @router.delete("/{rid}", summary="角色删除", dependencies=[Security(check_permissions, scopes=["role_delete"])])
-async def delete_role(rid: int = Path(..., gt=0)):
+async def delete_role(req: Request, rid: int = Path(..., gt=0)):
     role = await Role.get_or_none(pk=rid)
     if role is None:
         return FailResp(code=30201, msg="角色不存在!")
     await Role.filter(pk=rid).delete()
+    await OperationLog.add_log(req, req.state.user.id, OpObject.role, OpMethod.delete_object, f"删除角色({rid})")
     return SuccessResp(data="删除成功!")
 
 
 @router.put("/{rid}", summary="角色修改", dependencies=[Security(check_permissions, scopes=["role_update"])])
-async def update_role(post: UpdateRole, rid: int = Path(..., gt=0), redis: Redis = Depends(get_redis)):
+async def update_role(req: Request, post: UpdateRole, rid: int = Path(..., gt=0), redis: Redis = Depends(get_redis)):
     role = await Role.get_or_none(pk=rid)
     if role is None:
         return FailResp(code=30301, msg='没有找到这个角色')
@@ -75,6 +84,8 @@ async def update_role(post: UpdateRole, rid: int = Path(..., gt=0), redis: Redis
             update_data = post.dict(exclude_unset=True, exclude_none=True)
             await role.update_from_dict(update_data)
             await role.save()
+            await OperationLog.add_log(req, req.state.user.id, OpObject.role, OpMethod.update_object,
+                                       f"修改角色({rid})")
             # 清空权限
             await role.access.clear()
             # 修改权限
@@ -89,6 +100,8 @@ async def update_role(post: UpdateRole, rid: int = Path(..., gt=0), redis: Redis
                 # 分配权限
                 await role.access.add(*accesses)
             # 首页是必选的
+                await OperationLog.add_log(req, req.state.user.id, OpObject.role, OpMethod.allocate_resources,
+                                           f"分配权限({rid})")
             # home_menu = await Access.get(title='首页')
             # await role.access.add(home_menu)
     except OperationalError:

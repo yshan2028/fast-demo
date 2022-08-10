@@ -7,8 +7,7 @@
 # Project: fa-demo
 # IDE:     PyCharm
 
-from .admin import (filter_roles as filter_roles,
-                    filter_users as filter_users)
+from .admin import (filter_logs as filter_logs, filter_roles as filter_roles, filter_users as filter_users)
 from .auth import (create_access_token as create_access_token,
                    get_current_active_user as get_current_active_user,
                    get_current_user as get_current_user)

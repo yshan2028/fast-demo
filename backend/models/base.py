@@ -6,11 +6,11 @@
 # File:    user.py
 # Project: fa-demo
 # IDE:     PyCharm
-
+from fastapi import Request
 from tortoise import fields
 
 from .abc import TortoiseBaseModel
-from .enums import UserGender
+from ..enums import OperationMethod, OperationObject, UserGender
 
 
 class User(TortoiseBaseModel):
@@ -99,3 +99,34 @@ class UserProfile(TortoiseBaseModel):
     class Meta:
         table_description = "用户扩展资料"
         table = "profile"
+
+
+class OperationLog(TortoiseBaseModel):
+    user_id = fields.IntField(description="用户ID")
+    object_cls = fields.CharField(max_length=255, description="操作对象类")
+    method = fields.CharField(max_length=255, description="操作方法")
+    ip = fields.CharField(null=True, max_length=32, description="访问IP")
+    detail = fields.JSONField(description="详细参数")
+
+    @classmethod
+    async def add_log(cls, req: Request, user_id: int, object_cls: OperationObject,
+                      method: OperationMethod, remark: str):
+        if req.headers.get('x-forwarded-for'):
+            ip = req.headers.get('x-forwarded-for')
+        else:
+            ip = req.scope['client'][0]
+        data = {
+            "user_id": user_id,
+            "object_cls": object_cls.value,
+            "method": method.value,
+            "ip": ip,
+            "remark": remark,
+            "detail": {
+                "target_url": req.get("path"),
+                "user_agent": req.headers.get('user-agent'),
+                "method": req.method,
+                "params": dict(req.query_params),
+                "body": bytes(await req.body()).decode()
+                },
+            }
+        await cls.create(**data)

@@ -13,7 +13,7 @@ from pydantic import BaseModel, Field, validator
 
 from .base import ORMModel
 from .role import RoleInfoForLoginResp
-from ..models import UserGender
+from ..enums import UserGender
 
 
 # -------------------------------  检验函数  ---------------------------------------------
