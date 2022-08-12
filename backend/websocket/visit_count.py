@@ -29,9 +29,9 @@ async def websocket_endpoint(websocket: WebSocket, token: str = Path(...)):
     try:
         while True:
             # 保持心跳
-            data = await websocket.receive_text()
-            if data.lower() == 'ping':
-                await websocket.send_text("pong")
+            # data = await websocket.receive_text()
+            # if data.lower() == 'ping':
+            #     await websocket.send_text("pong")
 
             time_str = datetime.datetime.now().strftime("%H:%M:%S")
             await websocket.send_json({"time": time_str, "count": random.randint(51, 100)})
