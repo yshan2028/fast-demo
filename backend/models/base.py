@@ -111,10 +111,20 @@ class OperationLog(TortoiseBaseModel):
     @classmethod
     async def add_log(cls, req: Request, user_id: int, object_cls: OperationObject,
                       method: OperationMethod, remark: str):
+        # 正确获取ip
         if req.headers.get('x-forwarded-for'):
             ip = req.headers.get('x-forwarded-for')
         else:
             ip = req.scope['client'][0]
+        # 密码 显示 为 *
+        try:
+            body = await req.json()
+            for key, value in body.items():
+                if "password" in key:
+                    body[key] = "*" * len(value)
+        except Exception:
+            body = bytes(await req.body()).decode()
+
         data = {
             "user_id": user_id,
             "object_cls": object_cls.value,
@@ -126,7 +136,7 @@ class OperationLog(TortoiseBaseModel):
                 "user_agent": req.headers.get('user-agent'),
                 "method": req.method,
                 "params": dict(req.query_params),
-                "body": bytes(await req.body()).decode()
+                "body": body
                 },
             }
         await cls.create(**data)

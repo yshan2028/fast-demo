@@ -7,5 +7,5 @@
 # Project: fa-demo
 # IDE:     PyCharm
 
-from .base import (Access as Access, OperationLog as OperationLog, Role as Role, User as User,
-                   UserProfile as UserProfile)
+from .base import (Access as Access, OperationLog as OperationLog, Role as Role, TortoiseBaseModel as TortoiseBaseModel,
+                   User as User, UserProfile as UserProfile)

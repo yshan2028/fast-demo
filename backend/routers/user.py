@@ -64,7 +64,7 @@ async def login(req: Request, post: UserLogin, code_in_redis: str = Depends(get_
         return FailResp(code=10301, msg='账号与密码不匹配')
     access_token = create_access_token(data={"sub": user.username})
 
-    await OperationLog.add_log(req, user.pk, OpObject.user, OpMethod.login_by_account, f"用户登陆({user.pk})")
+    await OperationLog.add_log(req, user.pk, OpObject.user, OpMethod.login_by_account, f"用户登陆(ID={user.pk})")
     # 此处只是为了配合前端，返回的信息为是否为管理员，没什么实际用处，只是不想改前端代码而已
     role_name = '超级管理员' if user.is_superuser else "普通管理员"
     role_value = '超级管理员' if user.is_superuser else "普通管理员"
