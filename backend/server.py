@@ -25,6 +25,7 @@ from .exceptions import (http422_error_handler, http_error_handler, mysql_does_n
 from .middlewares import BaseMiddleware, LogRequestResponseMiddleware
 from .routers import api_routers
 from .views import view_routers
+from .websocket import ws_router
 
 app = FastAPI(debug=settings.debug,
               docs_url=None,
@@ -36,7 +37,7 @@ app = FastAPI(debug=settings.debug,
               default_response_class=ORJSONResponse)
 
 # 只有在debug的时候才启用文档功能
-if  settings.debug:
+if settings.debug:
     # custom_openapi
     def custom_openapi():
         if app.openapi_schema:
@@ -101,6 +102,8 @@ register_tortoise(app, config=settings.tortoise_orm_config)
 app.include_router(api_routers)
 # 挂载视图路由
 app.include_router(view_routers)
+# 挂载 websocket 路由
+app.include_router(ws_router)
 
 # 静态资源目录
 app.mount(settings.static_url_prefix, StaticFiles(directory=settings.static_dir), name="static")
