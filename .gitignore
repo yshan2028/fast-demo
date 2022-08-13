@@ -1,6 +1,7 @@
+### User template
 *.log.????-??-??
-./migrations/base/*.sql
-./.idea/
+.idea/
+
 ### MicrosoftOffice template
 *.tmp
 
