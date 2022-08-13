@@ -1,6 +1,6 @@
 *.log.????-??-??
 ./migrations/base/*.sql
-
+./.idea
 ### MicrosoftOffice template
 *.tmp
 
