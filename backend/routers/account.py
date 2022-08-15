@@ -24,8 +24,7 @@ from ..utils import encrypt_password
 router = APIRouter(prefix='/account', tags=['账号管理'])
 
 
-@router.get('', summary='账号列表',
-            response_model=PageResp[AccountInfo],
+@router.get('', summary='账号列表', response_model=PageResp[AccountInfo],
             dependencies=[Security(check_permissions, scopes=["account_list"])])
 async def get_all_account(pg: PageSizePaginator = Depends(PageSizePaginator()), filters=Depends(filter_users)):
     user_qs = User.all().prefetch_related('role')

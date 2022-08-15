@@ -55,7 +55,7 @@ class PageSizePaginator:
 
     def __call__(self, page_num: int = Query(1, description='当前页码', alias='page'),
                  page_size: int = Query(10, description='每页数量', alias='pageSize'),
-                 order: List[str] = Query(['order_no', 'id'], description='按指定字段排序，格式：id 或 -create_time')):
+                 order: List[str] = Query(['id'], description='按指定字段排序，格式：id 或 -create_time')):
         self.order = order
         self.page_num = max(page_num, 1)  # 如果传入的值小于1，按 1 算
         self.page_size = min(page_size, self.max_size)  # 如果超过 max_size ， 就算做是 maxsize
