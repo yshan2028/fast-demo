@@ -33,7 +33,7 @@ steps:
     settings:
       branch: master
       remote: git@gitee.com:nhnhwsnh/fastapi_demo.git
-      force: false
+      force: true
       commit: true
       ssh_key:
         from_secret: gitee_ssh_key
