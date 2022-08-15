@@ -13,7 +13,7 @@ from typing import List, Optional
 from aioredis import Redis
 from fastapi import APIRouter, Depends, Form, Query, Request
 from fastapi.security import OAuth2PasswordRequestForm
-from pydantic import Field, parse_obj_as
+from pydantic import Field, parse_obj_as, validator
 from tortoise.query_utils import Prefetch
 
 from ..config import settings
@@ -153,3 +153,24 @@ async def orm_test_mtm1():
     user_qs = User.all().prefetch_related('role')
     data = await UserInfoProfile.from_queryset(user_qs)
     return MultiResp[UserInfoProfile](data=data)
+
+
+# 格式化时间 pydantic实现
+class FormatTime(ORMModel):
+    now: datetime.datetime
+
+    @validator('now')
+    def passwords_match(cls, value):
+        return value.strftime("%Y-%m-%d %H:%M:%S")
+
+
+@router.get('/time/format1', summary="格式化时间   --  pydantic-validator 实现")
+async def format_time1():
+    now = datetime.datetime.now()
+    temp = FormatTime(now=now)
+    return SuccessResp[FormatTime](data=temp)
+
+
+@router.get('/time/format2', summary="格式化时间   --  property 实现")
+async def format_time1():
+    return SuccessResp[str](data="此处用 @property 也能实现这种效果，懒得写了 ")
