@@ -171,6 +171,6 @@ async def format_time1():
     return SuccessResp[FormatTime](data=temp)
 
 
-@router.get('/time/format2', summary="格式化时间   --  property 实现")
+@router.get('/time/format2', summary="格式化时间   --  property 实现 ")
 async def format_time1():
     return SuccessResp[str](data="此处用 @property 也能实现这种效果，懒得写了 ")
