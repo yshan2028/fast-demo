@@ -20,7 +20,9 @@ git clone https://gitee.com/nhnhwsnh/fastapi_demo.git
 
 ## 2。创建python虚拟环境
 
-> 略
+> 本项目使用的是 python3.10，推荐也用这个版本
+> 其他版本，可能需要您自行处理一个版本差异
+> 过程略
 
 ## 3. 安装依赖
 
