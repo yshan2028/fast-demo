@@ -86,4 +86,4 @@ services:
       - mysql
       - redis
     restart: always
-    entrypoint: [ 'gunicorn','-c','./backend/config/gunicorn.conf.py' ]
+    entrypoint: [ 'gunicorn','-c','./deploy/gunicorn.conf.py' ]

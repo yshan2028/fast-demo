@@ -3,7 +3,7 @@
 .idea/
 media
 !media/.gitkeep
-
+gunicron.pid
 ### MicrosoftOffice template
 *.tmp
 
