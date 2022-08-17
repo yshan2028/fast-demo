@@ -8,12 +8,13 @@
 # IDE:     PyCharm
 
 import datetime
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from aioredis import Redis
-from fastapi import APIRouter, Depends, Form, Query, Request
+from fastapi import APIRouter, Depends, File, Form, Query, Request, UploadFile
 from fastapi.security import OAuth2PasswordRequestForm
-from pydantic import Field, parse_obj_as
+from pydantic import Field, parse_obj_as, validator
+from starlette.concurrency import run_in_threadpool
 from tortoise.query_utils import Prefetch
 
 from ..config import settings
@@ -21,7 +22,7 @@ from ..decorators import cache
 from ..dependencies import create_access_token, get_captcha_code, get_redis
 from ..models import User, UserProfile
 from ..schemas import FailResp, MultiResp, ORMModel, SuccessResp, Token
-from ..utils import verify_password
+from ..utils import random_str, save_file, verify_password
 
 router = APIRouter(prefix='/test', tags=['测试'])
 
@@ -31,6 +32,48 @@ async def ping(req: Request):
     print(req.session)
     data = {'ping': 'pong'}
     return SuccessResp(data=data)
+
+
+@router.post("/files")
+async def create_file(file: bytes = File()):
+    return {"file_size": len(file)}
+
+
+@router.post("/uploadfile")
+async def create_upload_file(myfile: UploadFile):
+    # 生成一个新的文件名
+    if '.' in myfile.filename:
+        file_name = ''.join(myfile.filename.split('.')[:-1])
+        file_suffix = myfile.filename.split('.')[-1]
+        file_full_name = f"{file_name}_{random_str()}.{file_suffix}"
+    else:
+        file_full_name = f"{myfile.filename}_{random_str()}"
+
+    # 生成一个目录
+    folder_name = datetime.datetime.now().strftime("avatar/%Y/%m/%d")
+    folder_path = settings.media_dir / folder_name
+
+    if not folder_path.exists():
+        folder_path.mkdir(parents=True)
+
+    # 组合成文件全名
+    file_full_path = folder_path / file_full_name
+
+    # 获取文件内容
+    contents = await myfile.read()
+
+    # 异步保存防阻塞
+    await run_in_threadpool(save_file, file_full_path=file_full_path, contents=contents)
+
+    # 返回一些信息
+    file_url = settings.media_url_prefix + "/" + folder_name + "/" + file_full_name
+    data = {"filename": myfile.filename,
+            "file_full_name": file_full_name,
+            "folder_name": folder_name,
+            "file_full_path": str(file_full_path),
+            "content_type": myfile.content_type,
+            "file_url": file_url}
+    return SuccessResp[Dict](data=data)
 
 
 @router.get('/cache', summary='cache')
@@ -153,3 +196,24 @@ async def orm_test_mtm1():
     user_qs = User.all().prefetch_related('role')
     data = await UserInfoProfile.from_queryset(user_qs)
     return MultiResp[UserInfoProfile](data=data)
+
+
+# 格式化时间 pydantic实现
+class FormatTime(ORMModel):
+    now: datetime.datetime
+
+    @validator('now')
+    def passwords_match(cls, value):
+        return value.strftime("%Y-%m-%d %H:%M:%S")
+
+
+@router.get('/time/format1', summary="格式化时间   --  pydantic-validator 实现")
+async def format_time1():
+    now = datetime.datetime.now()
+    temp = FormatTime(now=now)
+    return SuccessResp[FormatTime](data=temp)
+
+
+@router.get('/time/format2', summary="格式化时间   --  property 实现 ")
+async def format_time1():
+    return SuccessResp[str](data="此处用 @property 也能实现这种效果，懒得写了 ")

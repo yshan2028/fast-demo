@@ -61,3 +61,8 @@ def make_tree(data, parent_id=0, parent_key='parent_id', key_key='key'):
                 item["children"] = temp
             result.append(item)
     return result
+
+
+def save_file(file_full_path, contents):
+    with open(file_full_path, 'wb') as f:
+        f.write(contents)

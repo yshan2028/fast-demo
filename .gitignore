@@ -1,6 +1,8 @@
 ### User template
 *.log.????-??-??
 .idea/
+media
+!media/.gitkeep
 
 ### MicrosoftOffice template
 *.tmp

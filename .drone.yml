@@ -18,7 +18,8 @@ steps:
       script_stop: false # 设置为false，遇到第一次错误会继续运行后面的命令
       script:
         - cd /home/${DRONE_REPO_OWNER}/apps/${DRONE_REPO_NAME}
-        - git switch main
+        - git switch master
+        - git reset --hard
         - git pull
         - docker-compose  -f docker-compose.prod.yml down # 先停下
         - docker-compose  -f docker-compose.prod.yml build # 构建镜像
@@ -33,7 +34,7 @@ steps:
     settings:
       branch: master
       remote: git@gitee.com:nhnhwsnh/fastapi_demo.git
-      force: false
+      force: true
       commit: true
       ssh_key:
         from_secret: gitee_ssh_key

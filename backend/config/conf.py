@@ -69,7 +69,7 @@ class Settings(BaseSettings):
     # SetSessionMiddleware
     session_cookie_name = 'session'
     # 日志中间件的白名单，只填写去除 url_prefix 的部分
-    logger_path_white_list: list[str] = ['/user/captcha']
+    logger_path_white_list: List[str] = ['/user/captcha', '/test/files', '/test/uploadfile']
     # TrustedHostMiddleware
     allowed_hosts = ["*"]
 
