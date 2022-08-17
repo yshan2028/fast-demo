@@ -56,10 +56,11 @@ services:
       - "33333:80" # 前一个是宿主机端口，可以远程，后一个是容器内端口，只是容器之间使用的
     volumes:
       - ./deploy/nginx/nginx.conf:/etc/nginx/conf.d/default.conf # 挂载nginx配置文件
+      - ./logs/nginx_access.log:/var/log/nginx/nginx_access.log # 日志文件
+      - ./logs/nginx_error.log:/var/log/nginx/nginx_error.log # 日志文件
       - ./static:/usr/share/nginx/html/static # 挂载静态文件
-      - media_vol:/usr/share/nginx/html/media # 挂载用户上传媒体文件
       - ./dist:/usr/share/nginx/html/dist # 前端打包好的文件
-      - ./logs:/var/log/nginx # 日志文件
+      - media_vol:/usr/share/nginx/html/media # 挂载用户上传媒体文件
     networks:
       - nginx_network
     depends_on:
