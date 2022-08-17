@@ -35,7 +35,7 @@ def check_password(password: str) -> str:
 
 # -------------------------------  请求部分  ---------------------------------------------
 class UserRegister(BaseModel):
-    username: str = Field(..., min_length=4, max_length=20, description='用户名')
+    username: str = Field(..., min_length=4, max_length=20, description='用户名', example="这里输入用户名")
     password: str = Field(..., min_length=8, max_length=20, description='密码')
     password2: str = Field(..., min_length=8, max_length=20, description='密码2')
     code: str = Field(..., min_length=4, max_length=4, description='验证码')
@@ -83,9 +83,6 @@ class ModifyInfo(BaseModel):
     @validator('*')
     def blank_strings(cls, v):
         return None if v == "" else v
-
-
-
 
 
 # -------------------------------  响应部分  ---------------------------------------------
