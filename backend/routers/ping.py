@@ -8,6 +8,7 @@
 # IDE:     PyCharm
 
 import datetime
+import random
 from typing import Dict, List, Optional
 
 from aioredis import Redis
@@ -15,6 +16,7 @@ from fastapi import APIRouter, Depends, File, Form, Query, Request, UploadFile
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import Field, parse_obj_as, validator
 from starlette.concurrency import run_in_threadpool
+from tortoise.functions import Max
 from tortoise.query_utils import Prefetch
 
 from ..config import settings
@@ -217,3 +219,25 @@ async def format_time1():
 @router.get('/time/format2', summary="格式化时间   --  property 实现 ")
 async def format_time1():
     return SuccessResp[str](data="此处用 @property 也能实现这种效果，懒得写了 ")
+
+
+"""
+select id, username, gender,a.rank_num
+from (select *, ROW_NUMBER() over (partition by gender order by rand()) as rank_num from user) a
+where a.rank_num <= 3
+"""
+
+
+@router.get('/user/sample', summary='分组抽样')
+async def get_user_sample():
+    gender_list = await User.all().group_by('gender').values_list('gender', flat=True)
+    max_id = (await User.all().annotate(max_id=Max('id')).values_list('max_id', flat=True))[0]
+    # max_id = (await  User.all().order_by('-id').first()).pk
+    res = {str(g): [] for g in gender_list}
+    for gender in gender_list:
+        key = str(gender)
+        user_sample = await User.filter(gender=gender, id__gte=random.randint(1, max_id)).first().values('id',
+                                                                                                         'username',
+                                                                                                         'gender')
+        res[key].append(user_sample)
+    return res
