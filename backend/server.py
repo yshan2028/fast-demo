@@ -6,6 +6,8 @@
 # File:    main.py.py
 # Project: fa-demo
 # IDE:     PyCharm
+import logging
+
 from fastapi import FastAPI
 from fastapi.exceptions import HTTPException, RequestValidationError
 from fastapi.openapi.docs import get_redoc_html, get_swagger_ui_html
@@ -27,6 +29,7 @@ from .routers import api_routers
 from .views import view_routers
 from .websocket import ws_router
 
+logger = logging.getLogger('fastapi')
 app = FastAPI(debug=settings.debug,
               docs_url=None,
               redoc_url=None,
@@ -97,6 +100,20 @@ app.add_middleware(TrustedHostMiddleware, allowed_hosts=settings.allowed_hosts)
 
 # 注册数据库
 register_tortoise(app, config=settings.tortoise_orm_config)
+
+
+# 注册启动事件
+@app.on_event("startup")
+async def on_startup():
+    logo_path = settings.base_dir / 'logo.txt'
+    logger.info(logo_path.read_text(encoding='utf8'))
+
+
+# 注册停止事件
+@app.on_event("shutdown")
+def on_shutdown():
+    pass
+
 
 # 挂载接口路由
 app.include_router(api_routers)

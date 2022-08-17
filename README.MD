@@ -21,7 +21,9 @@ git clone https://gitee.com/nhnhwsnh/fastapi_demo.git
 ## 2。创建python虚拟环境
 
 > 本项目使用的是 python3.10，推荐也用这个版本
-> 其他版本，可能需要您自行处理一个版本差异
+>
+> 其他版本，可能需要您自行处理一些版本间的差异问题
+>
 > 过程略
 
 ## 3. 安装依赖
@@ -89,7 +91,7 @@ python manage.py user createroot --help
 
 省流：[传送门](./docs/aerich.md)
 
-# 继续开发
+# 五、继续开发
 
 ## 如果你修改了 `backend` 这个目录名，以下几处也要相应的修改
 
