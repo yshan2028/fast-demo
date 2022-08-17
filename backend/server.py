@@ -6,6 +6,8 @@
 # File:    main.py.py
 # Project: fa-demo
 # IDE:     PyCharm
+import logging
+
 from fastapi import FastAPI
 from fastapi.exceptions import HTTPException, RequestValidationError
 from fastapi.openapi.docs import get_redoc_html, get_swagger_ui_html
@@ -27,6 +29,7 @@ from .routers import api_routers
 from .views import view_routers
 from .websocket import ws_router
 
+logger = logging.getLogger('fastapi')
 app = FastAPI(debug=settings.debug,
               docs_url=None,
               redoc_url=None,
@@ -97,6 +100,52 @@ app.add_middleware(TrustedHostMiddleware, allowed_hosts=settings.allowed_hosts)
 
 # 注册数据库
 register_tortoise(app, config=settings.tortoise_orm_config)
+
+
+# 注册启动事件
+@app.on_event("startup")
+async def on_startup():
+    logger.info("""
+FFFFFFFFFFFFFFFFFFFFFF                                      tttt                       AAA              
+PPPPPPPPPPPPPPPPP  IIIIIIIIII
+F::::::::::::::::::::F                                   ttt:::t                      A:::A             
+P::::::::::::::::P I::::::::I
+F::::::::::::::::::::F                                   t:::::t                     A:::::A            
+P::::::PPPPPP:::::PI::::::::I
+FF::::::FFFFFFFFF::::F                                   t:::::t                    A:::::::A           PP:::::P     
+P:::::II::::::II
+  F:::::F       FFFFFaaaaaaaaaaaaa     ssssssssss  ttttttt:::::ttttttt             A:::::::::A            P::::P     
+  P:::::P I::::I
+  F:::::F            a::::::::::::a  ss::::::::::s t:::::::::::::::::t            A:::::A:::::A           P::::P     
+  P:::::P I::::I
+  F::::::FFFFFFFFFF  aaaaaaaaa:::::ss:::::::::::::st:::::::::::::::::t           A:::::A A:::::A          
+  P::::PPPPPP:::::P  I::::I
+  F:::::::::::::::F           a::::s::::::ssss:::::tttttt:::::::tttttt          A:::::A   A:::::A         
+  P:::::::::::::PP   I::::I
+  F:::::::::::::::F    aaaaaaa:::::as:::::s  ssssss      t:::::t               A:::::A     A:::::A        
+  P::::PPPPPPPPP     I::::I
+  F::::::FFFFFFFFFF  aa::::::::::::a  s::::::s           t:::::t              A:::::AAAAAAAAA:::::A       P::::P      
+         I::::I
+  F:::::F           a::::aaaa::::::a     s::::::s        t:::::t             A:::::::::::::::::::::A      P::::P      
+         I::::I
+  F:::::F          a::::a    a:::::ssssss   s:::::s      t:::::t    tttttt  A:::::AAAAAAAAAAAAA:::::A     P::::P      
+         I::::I
+FF:::::::FF        a::::a    a:::::s:::::ssss::::::s     t::::::tttt:::::t A:::::A             A:::::A  PP::::::PP    
+     II::::::II
+F::::::::FF        a:::::aaaa::::::s::::::::::::::s      tt::::::::::::::tA:::::A               A:::::A P::::::::P    
+     I::::::::I
+F::::::::FF         a::::::::::aa:::s:::::::::::ss         tt:::::::::::tA:::::A                 A:::::AP::::::::P    
+     I::::::::I
+FFFFFFFFFFF          aaaaaaaaaa  aaaasssssssssss             tttttttttttAAAAAAA                   AAAAAAPPPPPPPPPP    
+     IIIIIIIIII
+    """)
+
+
+# 注册停止事件
+@app.on_event("shutdown")
+def on_shutdown():
+    pass
+
 
 # 挂载接口路由
 app.include_router(api_routers)
