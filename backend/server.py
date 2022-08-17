@@ -105,40 +105,8 @@ register_tortoise(app, config=settings.tortoise_orm_config)
 # 注册启动事件
 @app.on_event("startup")
 async def on_startup():
-    logger.info("""
-FFFFFFFFFFFFFFFFFFFFFF                                      tttt                       AAA              
-PPPPPPPPPPPPPPPPP  IIIIIIIIII
-F::::::::::::::::::::F                                   ttt:::t                      A:::A             
-P::::::::::::::::P I::::::::I
-F::::::::::::::::::::F                                   t:::::t                     A:::::A            
-P::::::PPPPPP:::::PI::::::::I
-FF::::::FFFFFFFFF::::F                                   t:::::t                    A:::::::A           PP:::::P     
-P:::::II::::::II
-  F:::::F       FFFFFaaaaaaaaaaaaa     ssssssssss  ttttttt:::::ttttttt             A:::::::::A            P::::P     
-  P:::::P I::::I
-  F:::::F            a::::::::::::a  ss::::::::::s t:::::::::::::::::t            A:::::A:::::A           P::::P     
-  P:::::P I::::I
-  F::::::FFFFFFFFFF  aaaaaaaaa:::::ss:::::::::::::st:::::::::::::::::t           A:::::A A:::::A          
-  P::::PPPPPP:::::P  I::::I
-  F:::::::::::::::F           a::::s::::::ssss:::::tttttt:::::::tttttt          A:::::A   A:::::A         
-  P:::::::::::::PP   I::::I
-  F:::::::::::::::F    aaaaaaa:::::as:::::s  ssssss      t:::::t               A:::::A     A:::::A        
-  P::::PPPPPPPPP     I::::I
-  F::::::FFFFFFFFFF  aa::::::::::::a  s::::::s           t:::::t              A:::::AAAAAAAAA:::::A       P::::P      
-         I::::I
-  F:::::F           a::::aaaa::::::a     s::::::s        t:::::t             A:::::::::::::::::::::A      P::::P      
-         I::::I
-  F:::::F          a::::a    a:::::ssssss   s:::::s      t:::::t    tttttt  A:::::AAAAAAAAAAAAA:::::A     P::::P      
-         I::::I
-FF:::::::FF        a::::a    a:::::s:::::ssss::::::s     t::::::tttt:::::t A:::::A             A:::::A  PP::::::PP    
-     II::::::II
-F::::::::FF        a:::::aaaa::::::s::::::::::::::s      tt::::::::::::::tA:::::A               A:::::A P::::::::P    
-     I::::::::I
-F::::::::FF         a::::::::::aa:::s:::::::::::ss         tt:::::::::::tA:::::A                 A:::::AP::::::::P    
-     I::::::::I
-FFFFFFFFFFF          aaaaaaaaaa  aaaasssssssssss             tttttttttttAAAAAAA                   AAAAAAPPPPPPPPPP    
-     IIIIIIIIII
-    """)
+    logo_path = settings.base_dir / 'logo.txt'
+    logger.info(logo_path.read_text(encoding='utf8'))
 
 
 # 注册停止事件
