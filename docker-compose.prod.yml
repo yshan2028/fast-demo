@@ -86,5 +86,4 @@ services:
       - mysql
       - redis
     restart: always
-    tty: true
-    stdin_open: true
+    entrypoint: [ 'gunicorn','-c','./backend/config/gunicorn.conf.py' ]
