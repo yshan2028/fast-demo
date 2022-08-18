@@ -16,6 +16,7 @@ from fastapi import APIRouter, Depends, File, Form, Query, Request, UploadFile
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import Field, parse_obj_as, validator
 from starlette.concurrency import run_in_threadpool
+from tortoise import Tortoise
 from tortoise.functions import Max
 from tortoise.query_utils import Prefetch
 
@@ -241,3 +242,44 @@ async def get_user_sample():
                                                                                                          'gender')
         res[key].append(user_sample)
     return res
+
+
+@router.get('/tortoise/raw_sql', summary='小乌龟执行SQL语句')
+async def execute_raw_sql():
+    """
+# 方法汇总
+| 方法                | 作用                  | 参数                                      | 返回值                        |  
+| ------------------ | -------------------- | ----------------------------------------- | --------------------------- | 
+| execute_insert     | 执行查询或插入语句       | query: str, values: list                 |  int                         |
+| execute_many       | 执行多条语句           | query: str, values: List[list]            | None                         | 
+| execute_query      | 执行查询语句           | query:str,values:Optional[list]=None      | Tuple\[int, Sequence\[dict]] |
+| execute_query_dict | 执行查询语句，并返回字典 | query: str, values: Optional[list] = None | List[dict]                   |
+| execute_script     | 执行sql脚本           | query: str                                | None                         |
+
+---
+# 返回值说明
+
++ execute_insert: 最后一行的id
++ execute_query: （受影响的行数，结果集）
++ 结果集格式：\[{'id': 1, 'username': 'admin'}, {'id': 2, 'username': 'test'},......\]
++ execute_query_dict: 就是 execute_query 返回值的结果集部分
+
+---
+# 注意事项:
+
++ 上表中的查询语句和插入语句，并没有绝对的界限，底层都是调用了 `cursor.execute`, 我只按他的字面意思进行了翻译
++  拼接 sql 语句时，如果想手动拼接，不要忘记了引号，例如：`sql = "select * from user where username='admin'"`  admin是用引号包上的
++  如果选择传 `values` 的方式， 点位符 %s 不用加引号，底层的包会自动帮忙加上的，下面的 insert_sql 就是这样写的
+    """
+
+    conn = Tortoise.get_connection('default')
+    select_sql = "select id, username, phone from user limit 3;"
+    insert_sql = f"insert into user( username, password) VALUES (%s,%s);"
+    res = {
+        'execute_insert': await conn.execute_insert(insert_sql, [f"abcd{random.randint(100000, 999999)}", 'a12345678']),
+        'execute_many': await conn.execute_many(insert_sql, [[f"abcd{random.randint(100000, 999999)}", 'a12345678']]),
+        'execute_query': await conn.execute_query(select_sql),
+        'execute_query_dict': await conn.execute_query_dict(select_sql),
+        'execute_script': await conn.execute_script(select_sql),
+        }
+    return SuccessResp(data=res)
