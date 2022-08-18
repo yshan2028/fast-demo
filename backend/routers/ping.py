@@ -8,7 +8,10 @@
 # IDE:     PyCharm
 
 import datetime
+import os
 import random
+import time
+from multiprocessing import Process
 from typing import Dict, List, Optional
 
 from aioredis import Redis
@@ -283,3 +286,18 @@ async def execute_raw_sql():
         'execute_script': await conn.execute_script(select_sql),
         }
     return SuccessResp(data=res)
+
+
+def task_process():
+    print('start   pid = ', os.getpid(), datetime.datetime.now())
+    for i in range(5):
+        print(i, 'pid = ', os.getpid())
+        time.sleep(1)
+    print('end   pid = ', os.getpid())
+
+
+@router.get('/new/process', summary='尝试启动一个新的进程')
+async def create_process():
+    p = Process(target=task_process)
+    p.start()
+    return SuccessResp(data={'pid': p.pid})
