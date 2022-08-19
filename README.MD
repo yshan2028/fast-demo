@@ -36,6 +36,10 @@ pip install -r requirements.txt
 ## 4. 启动 mysql 等基础设施
 
 > 如果不习惯使用 docker 也可以自己手动搞定这些
+>
+> 版本要求：mysql 8.0.27 redis 6.2.7
+>
+> 其他版本，没测试过，不保证能跑起来。
 
 ```shell
 docker-compose -f docker-compose.local.yml up -d
