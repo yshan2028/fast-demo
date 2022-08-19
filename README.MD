@@ -22,7 +22,7 @@ git clone https://gitee.com/nhnhwsnh/fastapi_demo.git
 
 > 本项目使用的是 python3.10，推荐也用这个版本
 >
-> 其他版本，可能需要您自行处理一些版本间的差异问题
+> 其他版本，可能需要您自行处理一些版本间的差异问题（见本文第六部分）
 >
 > 过程略
 
@@ -103,3 +103,75 @@ python manage.py user createroot --help
 
 + 在 `backend/models` 目录下新增相应的文件，并将其加入到  `__init__.py` 中
 + 使用 aerich 迁移数据库
+
+# 六、FAQ
+
+## 问：simpel_captcha 安装失败，是怎么回事？怎么办？
+
+> [simpel_captcha](https://pypi.org/project/simpel-captcha/) 要求 `Python >=3.9, <4.0`
+>
+> 如果你实在无法满足 `python >= 3.9`, 可以考虑换用 [fast-captcha](https://pypi.org/project/fast-captcha/)
+>
+> `fast-captcha` 对 `python`的要求低一点（`Python >=3.7, <4.0`）
+>
+> 这两个包的功能类似，使用方法也基本差不多！
+
+## 问：`-> str | None` 报错，怎么办？
+
+> python3.10 可以使用 `|` 来表示联合类型。
+>
+>例如 `phone: str | int` 表示 `phone` 可以是`str`类型，也可以是`int`类型
+>
+> `phone: str | int` 等价于 `phone: Union[str, int]`
+>
+> 如果你实在不想解决这个问题，把`-> str | None`删除了也可以！
+
+## 问：我在本地运行了这个项目，为什么控制台会输出这么东西？
+
+> 为了方便开发阶段的调试，我把所有日志器的等级都设置到了 `DEBUG`
+>
+> 相应的设置文件在 `backend/config/logging.dev.json`
+>
+> 可以根据需要，自行修改配置
+
+## 问：`backend/routers/ping.py` 里面写了好多测试的接口，项目上线会不会造成安全问题？
+
+> 不会。
+>
+> `backend/routers/__init__.py` 中第 21-22 行，ping.py中的接口，只有在`settings.enable_test_router==True` 时才有效
+>
+> 项目上线时，只要在相应的 env 文件中加入 `ENABLE_TEST_ROUTER=false`，这些接口就不会生效了
+>
+> 这个文件里面写的接口，只是一些小例子，直接删除文件+相应的代码可以彻底解决这个问题！
+
+## 问：`backend/config/conf.py`中的`Settings`类是如何读取环境变量的，我没看到`loadenv`啊？
+
+> 请阅读`pydantic`的文档中关于`Settings management`的内容
+> -> [传送门](https://pydantic-docs.helpmanual.io/usage/settings/)
+
+## 问：为什么我在代码仓库中看到了`.env.dev` `.env.prod` ？
+
+> 只是为了配合 `drone`, 快速地部署及更新演示站点。
+>
+> 正式的项目中，绝对不可能上传这些文件的。
+
+## 问：`env_file = ".env.prod" if os.getenv('PROJECT_ENV') == 'prod' else ".env.dev"` 这行代码好奇怪啊？
+
+> 见上一个问题。
+
+## 问：`tortoise orm` 中如何使用原生sql？
+
+> `backend/routers/ping.py` 中有示例。
+
+## 问：`get_menulist` 命令，好奇怪，看不懂？有没有关于这个命令的解释？
+
+> 这只是我自己想偷懒的时候，写的几行工具性质的临时代码，看不懂就删除了吧！
+
+## 问：`encrypt_password`,为什么在utils里面，不应该在`user`里面吗？
+
+> 这只是选择问题，您也可以把它作为一个类方法放到`User`模型中。
+> `verify_password` 同理。
+
+## 问：`PageResp[AccountInfo](data=page_data)`, PageResp 为什么可以引用 AccountInfo ？
+
+> 请自行百度`python 泛型`
