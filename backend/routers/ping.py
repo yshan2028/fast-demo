@@ -34,7 +34,7 @@ router = APIRouter(prefix='/test', tags=['测试'])
 
 @router.get('/ping', summary='ping')
 async def ping(req: Request):
-    print(req.session)
+    # print(req.session)
     data = {'ping': 'pong'}
     return SuccessResp(data=data)
 
