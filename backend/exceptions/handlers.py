@@ -16,15 +16,27 @@
 from logging import getLogger
 from typing import Union
 
+from aioredis.exceptions import ConnectionError as RedisConnectionError
 from fastapi import HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
-from tortoise.exceptions import DoesNotExist, IntegrityError, OperationalError, ValidationError as MysqlValidationError
+from tortoise.exceptions import (DoesNotExist as MysqlDoesNotExist, IntegrityError as MysqlIntegrityError,
+                                 OperationalError as MysqlOperationalError, ValidationError as MysqlValidationError)
 
 from .exc import UnicornException
 
 logger = getLogger('fastapi')
+
+
+async def redis_connection_error(_: Request, exc: RedisConnectionError):
+    """     redis连接错误    """
+    logger.error(f"redis连接错误  {str(exc)}")
+    return JSONResponse({
+        "code": -1,
+        "msg": str(exc),
+        "data": None
+        }, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 async def mysql_validation_error(_: Request, exc: MysqlValidationError):
@@ -37,7 +49,7 @@ async def mysql_validation_error(_: Request, exc: MysqlValidationError):
         }, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
 
-async def mysql_integrity_error(_: Request, exc: IntegrityError):
+async def mysql_integrity_error(_: Request, exc: MysqlIntegrityError):
     """    数据库完整性错误    """
     logger.error(f"数据库完整性错误  {exc}")
     return JSONResponse({
@@ -47,7 +59,7 @@ async def mysql_integrity_error(_: Request, exc: IntegrityError):
         }, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
 
-async def mysql_does_not_exist(_: Request, exc: DoesNotExist):
+async def mysql_does_not_exist(_: Request, exc: MysqlDoesNotExist):
     """     mysql 查询对象不存在异常处理    """
     logger.error(f"数据库查询对象不存在异常处理 {str(exc)}")
     return JSONResponse({
@@ -57,7 +69,7 @@ async def mysql_does_not_exist(_: Request, exc: DoesNotExist):
         }, status_code=status.HTTP_404_NOT_FOUND)
 
 
-async def mysql_operational_error(_: Request, exc: OperationalError):
+async def mysql_operational_error(_: Request, exc: MysqlOperationalError):
     """    mysql 数据库异常错误处理    """
     logger.error(f"数据库 OperationalError 异常 {str(exc)}")
     return JSONResponse({

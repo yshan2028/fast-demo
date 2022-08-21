@@ -8,6 +8,7 @@
 # IDE:     PyCharm
 import logging
 
+from aioredis.exceptions import ConnectionError as RedisConnectionError
 from fastapi import FastAPI
 from fastapi.exceptions import HTTPException, RequestValidationError
 from fastapi.openapi.docs import get_redoc_html, get_swagger_ui_html
@@ -19,11 +20,13 @@ from starlette.middleware.sessions import SessionMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from starlette.staticfiles import StaticFiles
 from tortoise.contrib.fastapi import register_tortoise
-from tortoise.exceptions import DoesNotExist, IntegrityError, OperationalError, ValidationError
+from tortoise.exceptions import (DoesNotExist as MysqlDoesNotExist, IntegrityError as MysqlIntegrityError,
+                                 OperationalError as MysqlOperationalError, ValidationError as MysqlValidationError)
 
 from .config import settings
 from .exceptions import (http422_error_handler, http_error_handler, mysql_does_not_exist, mysql_integrity_error,
-                         mysql_operational_error, mysql_validation_error, unicorn_exception_handler, UnicornException)
+                         mysql_operational_error, mysql_validation_error, redis_connection_error,
+                         unicorn_exception_handler, UnicornException)
 from .middlewares import BaseMiddleware, LogRequestResponseMiddleware
 from .routers import api_routers
 from .views import view_routers
@@ -79,10 +82,11 @@ if settings.debug:
 app.add_exception_handler(HTTPException, http_error_handler)
 app.add_exception_handler(RequestValidationError, http422_error_handler)
 app.add_exception_handler(UnicornException, unicorn_exception_handler)
-app.add_exception_handler(DoesNotExist, mysql_does_not_exist)
-app.add_exception_handler(IntegrityError, mysql_integrity_error)
-app.add_exception_handler(ValidationError, mysql_validation_error)
-app.add_exception_handler(OperationalError, mysql_operational_error)
+app.add_exception_handler(MysqlDoesNotExist, mysql_does_not_exist)
+app.add_exception_handler(MysqlIntegrityError, mysql_integrity_error)
+app.add_exception_handler(MysqlValidationError, mysql_validation_error)
+app.add_exception_handler(MysqlOperationalError, mysql_operational_error)
+app.add_exception_handler(RedisConnectionError, redis_connection_error)
 
 # 注册中间件，先注册的在内层, 洋葱模型
 app.add_middleware(LogRequestResponseMiddleware)
