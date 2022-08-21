@@ -6,7 +6,7 @@
 # File:    ping.py
 # Project: fa-demo
 # IDE:     PyCharm
-
+import asyncio
 import datetime
 import os
 import random
@@ -36,6 +36,13 @@ router = APIRouter(prefix='/test', tags=['测试'])
 async def ping(req: Request):
     # print(req.session)
     data = {'ping': 'pong'}
+    return SuccessResp(data=data)
+
+
+@router.get('/sleep', summary='sleep')
+async def sleep():
+    await asyncio.sleep(1)
+    data = {'await': 'sleep'}
     return SuccessResp(data=data)
 
 
