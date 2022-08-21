@@ -7,6 +7,7 @@
 # Project: fa-demo
 # IDE:     PyCharm
 from fastapi import Request
+from passlib.handlers.pbkdf2 import pbkdf2_sha256
 from tortoise import fields
 
 from .abc import TortoiseBaseModel
@@ -33,6 +34,23 @@ class User(TortoiseBaseModel):
 
     def __str__(self):
         return f"<{self.__class__.__name__} username: {self.username}>"
+
+    def check_password(self, raw_password: str) -> bool:
+        """
+        验证密码
+        :param raw_password: 明文密码
+        :return: 检验通过返回 True, 失败返回 False
+        """
+        return pbkdf2_sha256.verify(raw_password, self.password)
+
+    async def set_password(self, raw_password: str) -> None:
+        """
+        加密用户密码
+        :param raw_password: 明文密码
+        :return: None
+        """
+        self.password = pbkdf2_sha256.hash(raw_password)
+        await self.save()
 
     @property
     def phone_number(self) -> str | None:

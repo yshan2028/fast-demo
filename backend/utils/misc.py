@@ -6,53 +6,18 @@
 # File:    captcha.py
 # Project: fa-demo
 # IDE:     PyCharm
-import hashlib
-import random
-import uuid
-
-from passlib.handlers.pbkdf2 import pbkdf2_sha256
+from typing import List
 
 
-def random_num(length=6) -> str:
+def make_tree(data, parent_id=0, parent_key='parent_id', key_key='key') -> List[dict]:
     """
-    生成指定长度的纯数字字符串
-    :param length: 长度
-    :return:
+    生成的树结构
+    :param data: 需要处理的数据
+    :param parent_id: 父节点的唯一属性
+    :param parent_key: 用来标注父节点的唯一属性的 key
+    :param key_key: 节点的 key 值，用来标注当前节点的唯一属性
+    :return: 树结构的字典
     """
-    return ''.join([random.choice('0123456789') for _ in range(length)])
-
-
-def random_str():
-    """
-    唯一随机字符串
-    :return: str
-    """
-    only = hashlib.md5(str(uuid.uuid1()).encode(encoding='UTF-8')).hexdigest()
-    return str(only)
-
-
-def encrypt_password(raw_password: str) -> str:
-    """
-     加密用户密码
-    :param raw_password: 明文密码
-    :return: 密文密码
-    """
-    hash_password = pbkdf2_sha256.hash(raw_password)
-    return hash_password
-
-
-def verify_password(raw_password: str, hash_password: str) -> bool:
-    """
-    验证密码
-    :param raw_password: 明文密码
-    :param hash_password: 密文密码
-    :return:
-    """
-    return pbkdf2_sha256.verify(raw_password, hash_password)
-
-
-def make_tree(data, parent_id=0, parent_key='parent_id', key_key='key'):
-    """ 生成的树结构 """
     result = []
     for item in data:
         if parent_id == item[parent_key]:
@@ -61,8 +26,3 @@ def make_tree(data, parent_id=0, parent_key='parent_id', key_key='key'):
                 item["children"] = temp
             result.append(item)
     return result
-
-
-def save_file(file_full_path, contents):
-    with open(file_full_path, 'wb') as f:
-        f.write(contents)

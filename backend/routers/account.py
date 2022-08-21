@@ -19,7 +19,6 @@ from ..models import Role, User
 from ..models.base import OperationLog
 from ..schemas import (AccountCreate, AccountInfo, AccountUpdate, FailResp, PageResp, SingleResp,
                        SuccessResp)
-from ..utils import encrypt_password
 
 router = APIRouter(prefix='/account', tags=['账号管理'])
 
@@ -49,10 +48,10 @@ async def account_add(req: Request, post: AccountCreate):
     get_user = await User.get_or_none(username=post.username)
     if get_user is not None:
         return FailResp(code=20201, msg=f"账号 {post.username} 已经存在!")
-    post.password = encrypt_password(post.password)
 
     # 创建用户
     create_user = await User.create(**post.dict())
+    await create_user.set_password(post.password)
     await OperationLog.add_log(req, req.state.user.id, OpObject.account, OpMethod.create_object,
                                f"创建账号(ID={create_user.pk})")
     if post.roles:

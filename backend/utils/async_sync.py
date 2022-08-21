@@ -1,21 +1,36 @@
 #!/usr/bin/env python 
 # -*- coding:utf-8 -*-
-# Time:    2022-07-27 23:17
+# Time:    2022-08-22 00:08
 # Author:  rongli
 # Email:   abc@xyz.com
-# File:    cli_wraper.py
+# File:    run_sync.py
 # Project: fa-demo
 # IDE:     PyCharm
+
 import asyncio
 import functools
 from typing import Callable, Coroutine
 
+from starlette.concurrency import run_in_threadpool
 from tortoise import Tortoise
 
 from ..config import settings
 
 
-def _coro_wrapper(f: Callable[..., Coroutine]):
+def sync_to_async(func):
+    """ 把同步任务转为异步的线程去执行 此处借用了 run_in_threadpool """
+
+    @functools.wraps(func)
+    async def wrapper(*args, **kwargs):
+        func_ret = await run_in_threadpool(func, *args, **kwargs)
+        return func_ret
+
+    return wrapper
+
+
+def async_to_sync(f: Callable[..., Coroutine]):
+    """ 把异步转为同步 """
+
     @functools.wraps(f)
     def wrapper(*args, **kwargs):
         try:
@@ -28,7 +43,9 @@ def _coro_wrapper(f: Callable[..., Coroutine]):
     return wrapper
 
 
-def _tortoise_wrapper(f: Callable):
+def tortoise_wrapper(f: Callable):
+    """ 包一层 tortoise 的 init 的 close_connections """
+
     @functools.wraps(f)
     async def wrapper(*args, **kwargs):
         await Tortoise.init(settings.tortoise_orm_config)
@@ -41,4 +58,5 @@ def _tortoise_wrapper(f: Callable):
 
 
 def cli_wrapper(f: Callable):
-    return _coro_wrapper(_tortoise_wrapper(f))
+    """    manage命令的装饰器    """
+    return async_to_sync(tortoise_wrapper(f))

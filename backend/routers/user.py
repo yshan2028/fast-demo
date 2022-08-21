@@ -22,7 +22,6 @@ from ..models.base import OperationLog
 from ..schemas import (FailResp, LoginResult, ModifyInfo, ModifyPassword,
                        RoleInfoForLoginResp, SingleResp, SuccessResp, UserInfo,
                        UserLogin, UserRegister)
-from ..utils import encrypt_password, verify_password
 
 router = APIRouter(prefix='/user', tags=['用户中心'])
 
@@ -36,8 +35,8 @@ async def register(post: UserRegister, code_in_redis: str = Depends(get_captcha_
 
     if await User.filter(username=post.username).exists():
         return FailResp(code=10101, msg='当前用户名已被占用')
-    post.password = encrypt_password(post.password)
-    user = await User.create(**post.dict(exclude={'password2'}))
+    user = await User.create(**post.dict())
+    await user.set_password(post.password)
     user_info = UserInfo.from_orm(user)
     return SingleResp[UserInfo](data=user_info)
 
@@ -60,7 +59,7 @@ async def login(req: Request, post: UserLogin, code_in_redis: str = Depends(get_
     user = await User.get_or_none(username=post.username)
     if user is None:
         return FailResp(code=10301, msg='账号与密码不匹配')
-    if not verify_password(post.password, user.password):
+    if not user.check_password(post.password):
         return FailResp(code=10301, msg='账号与密码不匹配')
     access_token = create_access_token(data={"sub": user.username})
 
@@ -81,11 +80,9 @@ async def get_my_info(me=Depends(get_current_active_user)):
 
 @router.put('/password', response_model=Union[SuccessResp, FailResp], summary='更改密码')
 async def change_password(post: ModifyPassword, me: User = Depends(get_current_active_user)):
-    if not verify_password(post.old_password, me.password):
+    if me.check_password(post.old_password):
         return FailResp(code=10401, msg='旧密码输入错误')
-    hash_password = encrypt_password(post.new_password)
-    me.password = hash_password
-    await me.save(update_fields=['password'])
+    await me.set_password(post.new_password)
     return SuccessResp(data='密码更改成功')
 
 

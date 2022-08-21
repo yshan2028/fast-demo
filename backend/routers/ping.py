@@ -18,7 +18,6 @@ from aioredis import Redis
 from fastapi import APIRouter, Depends, File, Form, Query, Request, UploadFile
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import Field, parse_obj_as, validator
-from starlette.concurrency import run_in_threadpool
 from tortoise import Tortoise
 from tortoise.functions import Max
 from tortoise.query_utils import Prefetch
@@ -28,7 +27,7 @@ from ..decorators import cache
 from ..dependencies import create_access_token, get_captcha_code, get_redis
 from ..models import User, UserProfile
 from ..schemas import FailResp, MultiResp, ORMModel, SuccessResp, Token
-from ..utils import random_str, save_file, verify_password
+from ..utils import random_str, sync_to_async
 
 router = APIRouter(prefix='/test', tags=['测试'])
 
@@ -40,14 +39,15 @@ async def ping(req: Request):
     return SuccessResp(data=data)
 
 
-@router.post("/files")
+@router.post("/files", summary="上传文件 by File")
 async def create_file(file: bytes = File()):
     return {"file_size": len(file)}
 
 
-@router.post("/uploadfile")
+@router.post("/uploadfile", summary="上传文件 by UploadFile")
 async def create_upload_file(myfile: UploadFile):
-    # 生成一个新的文件名
+    # 此处仅做为一个示例，以后可以会抽成一个公共的函数
+    # 生成一个新的文件名：原文件名_随机值.原后缀名
     if '.' in myfile.filename:
         file_name = ''.join(myfile.filename.split('.')[:-1])
         file_suffix = myfile.filename.split('.')[-1]
@@ -55,7 +55,9 @@ async def create_upload_file(myfile: UploadFile):
     else:
         file_full_name = f"{myfile.filename}_{random_str()}"
 
-    # 生成一个目录
+    # 生成一个目录，支持时间命名
+    # 可用的时间日期格式化符号，可以查看下方的链接
+    # https://www.runoob.com/python/att-time-strftime.html
     folder_name = datetime.datetime.now().strftime("avatar/%Y/%m/%d")
     folder_path = settings.media_dir / folder_name
 
@@ -65,11 +67,17 @@ async def create_upload_file(myfile: UploadFile):
     # 组合成文件全名
     file_full_path = folder_path / file_full_name
 
-    # 获取文件内容
+    # 获取文件内容，全部读取到内存中，适用于小文件
     contents = await myfile.read()
 
     # 异步保存防阻塞
-    await run_in_threadpool(save_file, file_full_path=file_full_path, contents=contents)
+    # 加 sync_to_async 装饰器，不会阻塞整个服务
+    @sync_to_async
+    def save_file(file_path, content):
+        with open(file_path, 'wb') as f:
+            f.write(content)
+
+    await save_file(file_full_path, contents)
 
     # 返回一些信息
     file_url = settings.media_url_prefix + "/" + folder_name + "/" + file_full_name
@@ -107,7 +115,7 @@ async def token(form_data: OAuth2PasswordRequestForm = Depends()):
     user = await User.get_or_none(username=form_data.username)
     if user is None:
         return FailResp(code=10201, msg='用户名与密码不匹配')
-    if not verify_password(form_data.password, user.password):
+    if not user.check_password(form_data.password):
         return FailResp(code=10201, msg='用户名与密码不匹配')
     access_token = create_access_token(data={"sub": user.username})
     token = Token(access_token=access_token, token_type='bearer')

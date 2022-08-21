@@ -171,10 +171,10 @@ python manage.py user createroot --help
 
 > 这只是我自己想偷懒的时候，写的几行工具性质的临时代码，看不懂就删除了吧！
 
-## 问：`encrypt_password`,为什么在utils里面，不应该在`user`里面吗？
+## ~~问：`encrypt_password`,为什么在utils里面，不应该在`user`里面吗？~~
 
-> 这只是选择问题，您也可以把它作为一个类方法放到`User`模型中。
-> `verify_password` 同理。
+> ~~这只是选择问题，您也可以把它作为一个类方法放到`User`模型中。~~
+> ~~`verify_password` 同理。~~
 
 ## 问：`PageResp[AccountInfo](data=page_data)`, PageResp 为什么可以引用 AccountInfo ？
 

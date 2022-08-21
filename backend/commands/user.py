@@ -9,9 +9,8 @@
 from typer import Abort, Option, secho, Typer
 from typer.colors import GREEN, RED
 
-from .wrapper import cli_wrapper
 from ..models import User
-from ..utils import encrypt_password
+from ..utils import cli_wrapper
 
 app = Typer()
 
@@ -24,8 +23,8 @@ async def createroot(
         ):
     """Create a root user."""
     try:
-        hash_password = encrypt_password(password)
-        user = await User.create(username=username, password=hash_password, is_superuser=True, is_active=True)
+        user = await User.create(username=username, password=password, is_superuser=True, is_active=True)
+        await user.set_password(password)
         secho(f"Create root user: {user.username}", fg=GREEN)
     except Exception as e:
         secho(e)

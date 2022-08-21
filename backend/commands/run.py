@@ -12,10 +12,10 @@ import uvicorn
 from starlette.routing import Mount
 from typer import Typer
 
-from .wrapper import cli_wrapper
 from ..config import settings
 from ..models import Access
 from ..server import app as fast_app
+from ..utils import cli_wrapper
 
 app = Typer()
 
