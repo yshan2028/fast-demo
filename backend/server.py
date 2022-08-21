@@ -6,7 +6,6 @@
 # File:    main.py.py
 # Project: fa-demo
 # IDE:     PyCharm
-import logging
 
 from aioredis.exceptions import ConnectionError as RedisConnectionError
 from fastapi import FastAPI
@@ -24,6 +23,7 @@ from tortoise.exceptions import (DoesNotExist as MysqlDoesNotExist, IntegrityErr
                                  OperationalError as MysqlOperationalError, ValidationError as MysqlValidationError)
 
 from .config import settings
+from .events import log_shutdown, log_startup, show_logo
 from .exceptions import (http422_error_handler, http_error_handler, mysql_does_not_exist, mysql_integrity_error,
                          mysql_operational_error, mysql_validation_error, redis_connection_error,
                          unicorn_exception_handler, UnicornException)
@@ -32,7 +32,7 @@ from .routers import api_routers
 from .views import view_routers
 from .websocket import ws_router
 
-logger = logging.getLogger('fastapi')
+# 创建 FastAPI 对象
 app = FastAPI(debug=settings.debug,
               docs_url=None,
               redoc_url=None,
@@ -95,29 +95,19 @@ app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins,
                    allow_credentials=settings.cors_allow_credentials,
                    allow_methods=settings.cors_allow_methods,
                    allow_headers=settings.cors_allow_headers)
-
 app.add_middleware(SessionMiddleware, secret_key=settings.session_secret_key,
                    session_cookie=settings.session_cookie,
                    max_age=settings.session_max_age)
-
 app.add_middleware(TrustedHostMiddleware, allowed_hosts=settings.allowed_hosts)
 
 # 注册数据库
 register_tortoise(app, config=settings.tortoise_orm_config)
 
-
 # 注册启动事件
-@app.on_event("startup")
-async def on_startup():
-    logo_path = settings.base_dir / 'logo.txt'
-    logger.info(logo_path.read_text(encoding='utf8'))
-
-
+app.add_event_handler('startup', show_logo)
+app.add_event_handler('startup', log_startup)
 # 注册停止事件
-@app.on_event("shutdown")
-def on_shutdown():
-    pass
-
+app.add_event_handler('shutdown', log_shutdown)
 
 # 挂载接口路由
 app.include_router(api_routers)
