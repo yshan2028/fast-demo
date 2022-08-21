@@ -21,10 +21,12 @@ from fastapi import HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
-from tortoise.exceptions import (DoesNotExist as MysqlDoesNotExist, IntegrityError as MysqlIntegrityError,
-                                 OperationalError as MysqlOperationalError, ValidationError as MysqlValidationError)
+from tortoise.exceptions import (DBConnectionError as MysqlConnectionError, DoesNotExist as MysqlDoesNotExist,
+                                 IntegrityError as MysqlIntegrityError, OperationalError as MysqlOperationalError,
+                                 ValidationError as MysqlValidationError)
 
 from .exc import UnicornException
+from ..schemas import FailResp
 
 logger = getLogger('fastapi')
 
@@ -32,11 +34,15 @@ logger = getLogger('fastapi')
 async def redis_connection_error(_: Request, exc: RedisConnectionError):
     """     redis连接错误    """
     logger.error(f"redis连接错误  {str(exc)}")
-    return JSONResponse({
-        "code": -1,
-        "msg": str(exc),
-        "data": None
-        }, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return JSONResponse(FailResp(code=500, msg="redis连接错误").dict(by_alias=True),
+                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+async def mysql_connection_error(_: Request, exc: MysqlConnectionError):
+    """     数据库连接错误    """
+    logger.error(f"数据库连接错误  {str(exc)}")
+    return JSONResponse(FailResp(code=500, msg="数据库连接错误").dict(by_alias=True),
+                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 async def mysql_validation_error(_: Request, exc: MysqlValidationError):

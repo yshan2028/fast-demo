@@ -19,12 +19,14 @@ from starlette.middleware.sessions import SessionMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from starlette.staticfiles import StaticFiles
 from tortoise.contrib.fastapi import register_tortoise
-from tortoise.exceptions import (DoesNotExist as MysqlDoesNotExist, IntegrityError as MysqlIntegrityError,
-                                 OperationalError as MysqlOperationalError, ValidationError as MysqlValidationError)
+from tortoise.exceptions import (DBConnectionError as MysqlConnectionError, DoesNotExist as MysqlDoesNotExist,
+                                 IntegrityError as MysqlIntegrityError, OperationalError as MysqlOperationalError,
+                                 ValidationError as MysqlValidationError)
 
 from .config import settings
 from .events import log_shutdown, log_startup, show_logo
-from .exceptions import (http422_error_handler, http_error_handler, mysql_does_not_exist, mysql_integrity_error,
+from .exceptions import (http422_error_handler, http_error_handler, mysql_connection_error, mysql_does_not_exist,
+                         mysql_integrity_error,
                          mysql_operational_error, mysql_validation_error, redis_connection_error,
                          unicorn_exception_handler, UnicornException)
 from .middlewares import BaseMiddleware, LogRequestResponseMiddleware
@@ -82,6 +84,7 @@ if settings.debug:
 app.add_exception_handler(HTTPException, http_error_handler)
 app.add_exception_handler(RequestValidationError, http422_error_handler)
 app.add_exception_handler(UnicornException, unicorn_exception_handler)
+app.add_exception_handler(MysqlConnectionError, mysql_connection_error)
 app.add_exception_handler(MysqlDoesNotExist, mysql_does_not_exist)
 app.add_exception_handler(MysqlIntegrityError, mysql_integrity_error)
 app.add_exception_handler(MysqlValidationError, mysql_validation_error)
