@@ -17,7 +17,7 @@ from tortoise import Tortoise
 from ..config import settings
 
 
-def sync_to_async(func):
+def sync_to_async(func: Callable):
     """ 把同步任务转为异步的线程去执行 此处借用了 run_in_threadpool """
 
     @functools.wraps(func)
