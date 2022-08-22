@@ -30,8 +30,3 @@ def test_time():
 def test_sleep():
     response = client.get(settings.url_prefix + '/test/sleep')
     assert response.status_code == status.HTTP_200_OK
-
-# def test_token():
-#     form_data = {'username': 'admin', 'password': 'a12345678'}
-#     response = client.post(settings.url_prefix + '/test/token', data=form_data)
-#     assert response.status_code == status.HTTP_200_OK
