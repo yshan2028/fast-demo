@@ -130,7 +130,7 @@ python manage.py user createroot --help
 >
 > 如果你实在不想解决这个问题，把`-> str | None`删除了也可以！
 
-## 问：我在本地运行了这个项目，为什么控制台会输出这么东西？
+## 问：我在本地运行了这个项目，为什么控制台会输出这么多东西？
 
 > 为了方便开发阶段的调试，我把所有日志器的等级都设置到了 `DEBUG`
 >
@@ -179,3 +179,7 @@ python manage.py user createroot --help
 ## 问：`PageResp[AccountInfo](data=page_data)`, PageResp 为什么可以引用 AccountInfo ？
 
 > 请自行百度`python 泛型`
+
+## 问：我可以提个 pr 吗？
+
+> 首先很感谢您对我的支持！但是，此仓库是个镜像仓库，不接受pr,有事情可以提issue！
