@@ -71,7 +71,7 @@ class User(TortoiseBaseModel):
 class Role(TortoiseBaseModel):
     user: fields.ManyToManyRelation["User"]
     role_name = fields.CharField(max_length=15, description="角色名称")
-
+    order_no = fields.IntField(default=999, null=True, description='用来排序的序号')
     access: fields.ManyToManyRelation["Access"] = fields.ManyToManyField("base.Access", related_name="role",
                                                                          on_delete=fields.CASCADE)
 
@@ -101,6 +101,8 @@ class Access(TortoiseBaseModel):
     is_button = fields.BooleanField(default=False, description="是否为按钮")
     scopes = fields.CharField(null=True, unique=True, max_length=255, description='权限范围标识')
     parent_id = fields.IntField(default=0, description='父id')
+
+    order_no = fields.IntField(default=999, null=True, description='用来排序的序号')
 
     class Meta:
         table_description = "权限表"
