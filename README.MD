@@ -89,6 +89,13 @@ python manage.py run server --host 127.0.0.1 --port 8888
 python manage.py user createroot --help
 ```
 
+## startapp
+
+> 快速生成 app，不用重复的写CRUD
+
+当前处于测试阶段
+具体用法 -》 [传送门](./docs/startapp.md)
+
 # 四、aerich 使用方法
 
 文档： [传送门](https://github.com/tortoise/aerich)
@@ -182,4 +189,5 @@ python manage.py user createroot --help
 
 ## 问：我可以提个 pr 吗？
 
-> 首先很感谢您对我的支持！但是，此仓库是个镜像仓库，不接受pr,有事情可以提issue！
+> 首先很感谢您对我的支持！
+> 但是，此仓库是个镜像仓库，不接受pr，有事情可以提issue！
