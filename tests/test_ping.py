@@ -6,27 +6,33 @@
 # File:    test_ping.py
 # Project: fa-demo
 # IDE:     PyCharm
-from fastapi.testclient import TestClient
+import pytest
+from httpx import AsyncClient
 from starlette import status
 
-from backend.config import settings
 from backend.schemas import SuccessResp
-from backend.server import app
-
-client = TestClient(app)
 
 
-def test_ping():
-    response = client.get(settings.url_prefix + '/test/ping')
+@pytest.mark.anyio
+async def test_ping(client: AsyncClient):
+    response = await client.get('/test/ping')
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == SuccessResp(data={"ping": "pong"}).dict(by_alias=True)
 
 
-def test_time():
-    response = client.get(settings.url_prefix + '/test/time')
+@pytest.mark.anyio
+async def test_time(client: AsyncClient):
+    response = await client.get('/test/time')
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_sleep():
-    response = client.get(settings.url_prefix + '/test/sleep')
+@pytest.mark.anyio
+async def test_sleep(client: AsyncClient):
+    response = await client.get('/test/sleep')
     assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.anyio
+async def test_not_found(client: AsyncClient):
+    response = await client.get('/x/y/z')
+    assert response.status_code == status.HTTP_404_NOT_FOUND

@@ -31,12 +31,16 @@ class LogRequestResponseMiddleware:
             await self.app(scope, receive, send)
             return
 
+        if scope.get('server')[0] == 'test':
+            await self.app(scope, receive, send)
+            return
+
         receive_ = await receive()
+
+        logger.debug(f"{self.__class__.__name__} request body: {receive_.get('body').decode()}")
 
         async def receive():
             return receive_
-
-        logger.debug(f"{self.__class__.__name__} request body: {receive_.get('body').decode()}")
 
         async def send_wrapper(message: Message) -> None:
             if message["type"] == "http.response.body":

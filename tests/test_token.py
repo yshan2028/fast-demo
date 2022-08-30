@@ -7,26 +7,31 @@
 # Project: fa-demo
 # IDE:     PyCharm
 import pytest
-from fastapi.testclient import TestClient
+from httpx import AsyncClient
 
-from backend.config import settings
 from backend.models import User
-
-username, password = ["admin", 'a12345678']  # 超级管理员
 
 
 @pytest.mark.anyio
-async def test_token(client: TestClient):
+async def test_token(client: AsyncClient):
+    username, password = ["admin_test", "a12345678"]
+    assert await User.filter(username=username).count() == 0
+
+    user = await User.create(username=username, password=password)
+    await user.set_password(password)
+
     data = {"username": username, "password": password}
-    response = client.post(settings.url_prefix + "/test/token", data=data)
+    response = await client.post("/test/token", data=data)
     assert response.status_code == 200
     assert response.json().get('token_type') == 'bearer'
     assert response.json().get('access_token')
 
 
 @pytest.mark.anyio
-async def test_superuser():
+async def test_superuser(client: AsyncClient):
+    username, password = ["admin", "a12345678"]
     user = await User.get_or_none(username=username)
     assert user is not None
     assert user.is_superuser
+    assert user.password is not password
     assert user.check_password(password)
