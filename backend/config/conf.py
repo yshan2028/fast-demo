@@ -54,7 +54,7 @@ class Settings(BaseSettings):
     media_dir = base_dir / 'media'
     media_url_prefix: str = '/media'
     # jinja2 模板目录
-    jinja2_templates_dir = static_dir / 'templates'
+    jinja2_templates_dir = base_dir / 'backend' / 'templates'
 
     # 中间件配置
     # 跨域请求
@@ -98,7 +98,7 @@ class Settings(BaseSettings):
 
     @property
     def tortoise_orm_model_modules(self) -> List[str]:
-        return ['aerich.models', 'backend.models']
+        return ['aerich.models', 'backend.models', 'backend.apps']
 
     @property
     def tortoise_orm_config(self) -> dict:

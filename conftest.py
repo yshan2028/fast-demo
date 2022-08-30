@@ -20,10 +20,11 @@ async def init_db(db_url, create_db: bool = False, schemas: bool = False) -> Non
             db_url=db_url, modules={"base": settings.tortoise_orm_model_modules}, _create_db=create_db
             )
     if create_db:
-        print(f"Database created! {db_url = }")
+        # print(f"Database created! {db_url = }")
+        pass
     if schemas:
         await Tortoise.generate_schemas()
-        print("Success to generate schemas")
+        # print("Success to generate schemas")
 
 
 async def init(db_url: str = DB_URL):
@@ -38,7 +39,7 @@ def anyio_backend():
 @pytest.fixture(scope="session")
 async def client():
     async with AsyncClient(app=app, base_url="http://test" + settings.url_prefix) as client:
-        print("Client is ready")
+        # print("Client is ready")
         yield client
 
 

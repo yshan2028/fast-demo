@@ -9,11 +9,9 @@
 import pytest
 from httpx import AsyncClient
 
-from tests.conftest import username
-
 
 @pytest.mark.anyio
 async def test_me(client_with_token: AsyncClient):
     response = await client_with_token.get("/user")
     assert response.status_code == 200
-    assert response.json()['result']['username'] == username
+    assert response.json()['code'] == 0
