@@ -39,6 +39,7 @@ class RoleStatus(BaseModel):
 class RoleFilter(BaseFilter):
     """ 过滤角色 """
     role_name__icontains: str = Query(None, alias='roleName')
+    remark__icontains: str = Query(None, alias='remark')
 
 
 # -------------------------------  响应部分  ---------------------------------------------
