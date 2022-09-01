@@ -21,10 +21,10 @@ steps:
         - git switch master
         - git reset --hard
         - git pull
-        #        - docker-compose  -f docker-compose.prod.yml down # 先停下
-        #        - docker-compose  -f docker-compose.prod.yml build # 构建镜像
-        #        - docker-compose  -f docker-compose.prod.yml up -d  # 重新启动
-        - docker-compose  -f docker-compose.prod.yml up -d --build
+        - docker-compose  -f docker-compose.prod.yml down # 先停下
+        - docker-compose  -f docker-compose.prod.yml build # 构建镜像
+        - docker-compose  -f docker-compose.prod.yml up -d  # 重新启动
+    #        - docker-compose  -f docker-compose.prod.yml up -d --build
     when:
       event: [ push, pull_request ]
       branch: [ master ]
