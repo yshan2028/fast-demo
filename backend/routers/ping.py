@@ -15,7 +15,7 @@ from multiprocessing import Process
 from typing import Dict, List, Optional
 
 from aioredis import Redis
-from fastapi import APIRouter, Depends, File, Form, Query, Request, UploadFile
+from fastapi import APIRouter, Cookie, Depends, File, Form, Header, Query, Request, UploadFile
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import Field, parse_obj_as, validator
 from tortoise import Tortoise
@@ -44,6 +44,25 @@ async def sleep():
     await asyncio.sleep(1)
     data = {'await': 'sleep'}
     return SuccessResp(data=data)
+
+
+@router.post("/header", summary="获取 Header 参数")
+async def get_header_param(
+        param: str = Header(..., description="自定义 Header", example="haha", alias="Authorization")):
+    """
+    ## 当使用 `Authorization` 或 `authorization` 时，docs界面不会自动发送请求头
+    ## 请使用 `Apipost` 或者 `postman` 测试这个接口
+    ## 关于参数名自动转换的问题，请查看官方文档 [传送门](https://fastapi.tiangolo.com/zh/tutorial/header-params/#_1)
+    """
+    return SuccessResp(data={"param": param})
+
+
+@router.get("/cookie", summary="获取 Cookie 参数")
+async def get_cookie_param(param: str = Cookie(None, alias="CocaCola", description="自定义 Cookie", example="PepsiCo")):
+    """
+    ## 请使用 `Apipost` 或者 `postman` 测试这个接口，在 header 中设置 `cookie` 注意是小写的 `c`
+    """
+    return SuccessResp(data={"param": param})
 
 
 @router.post("/files", summary="上传文件 by File")
