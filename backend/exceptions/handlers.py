@@ -26,6 +26,7 @@ from tortoise.exceptions import (DBConnectionError as MysqlConnectionError, Does
                                  ValidationError as MysqlValidationError)
 
 from .exc import UnicornException
+from ..config import settings
 from ..schemas import FailResp
 
 logger = getLogger('fastapi')
@@ -93,5 +94,9 @@ async def unicorn_exception_handler(_: Request, exc: UnicornException):
 async def http422_error_handler(_: Request, exc: Union[RequestValidationError, ValidationError], ) -> JSONResponse:
     """    参数校验错误处理    """
     logger.error(f"参数校验错误处理[422] {exc.errors()=}")
-    return JSONResponse(FailResp(code=422, msg="数据校验错误").dict(by_alias=True),
-                        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, )
+    if settings.debug:
+        return JSONResponse(FailResp(code=422, msg="数据校验错误", data=exc.errors()).dict(by_alias=True),
+                            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
+    else:
+        return JSONResponse(FailResp(code=422, msg="数据校验错误").dict(by_alias=True),
+                            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
