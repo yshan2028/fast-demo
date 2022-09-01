@@ -56,7 +56,7 @@ def start_app():
                 'models.py.tpl',
                 'routers.py.tpl',
                 'schemas.py.tpl',
-                'test_item.py.tpl']
+                'test_routers.py.tpl']
     for tpl in tpl_list:
         template = env.get_template(tpl)
         py_file_name = '.'.join(tpl.split('.')[:-1])

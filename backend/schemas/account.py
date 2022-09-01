@@ -9,9 +9,10 @@
 from datetime import datetime
 from typing import List, Optional
 
+from fastapi import Query
 from pydantic import BaseModel, EmailStr, Field, validator
 
-from .base import ORMModel
+from .base import BaseFilter, ORMModel
 from .user import check_password, check_username
 
 
@@ -47,6 +48,14 @@ class AccountUpdate(ORMModel):
     status: Optional[bool]
     remark: Optional[str]
     roles: List[int] = Field([], description="角色值")
+
+
+class AccountFilter(BaseFilter):
+    """ 过滤用户 """
+    username__icontains: Optional[str] = Query(None, alias="username",
+                                               description="用户名模糊匹，例如：username='zhangsan'")
+    nickname__icontains: Optional[str] = Query(None, alias="nickname")
+    email__icontains: Optional[str] = Query(None, alias="email")
 
 
 # ------------------------------------------------------------------------------------

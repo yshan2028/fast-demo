@@ -9,6 +9,8 @@
 import pytest
 from httpx import AsyncClient
 
+from backend.apps.item.models import Item
+
 
 @pytest.mark.anyio
 async def test_bulk_create(client_with_token: AsyncClient):
@@ -93,11 +95,31 @@ async def test_delete_not_exist_item_by_id(client_with_token: AsyncClient):
 
 
 @pytest.mark.anyio
-async def test_list_item_filter(client_with_token: AsyncClient):
-    params = {"itemName": "m-1"}
+async def test_list_item_filter_status(client_with_token: AsyncClient):
+    await Item.filter(id__lte=10).update(status=False)
+    params = {"status": False}
     resp = await client_with_token.get('/item', params=params)
     assert resp.status_code == 200
     assert resp.json()['code'] == 0
     assert resp.json()['result']['total'] > 0
     for item in resp.json()['result']['items']:
-        assert 'm-1' in item['itemName']
+        assert item['itemStatus'] is False
+
+
+@pytest.mark.anyio
+async def test_list_item_filter_create_time_end(client_with_token: AsyncClient):
+    params = {"createTimeEnd": "2000-01-01 00:00:00"}
+    resp = await client_with_token.get('/item', params=params)
+    assert resp.status_code == 200
+    assert resp.json()['code'] == 0
+    assert resp.json()['result']['total'] == 0
+
+
+@pytest.mark.anyio
+async def test_list_item_filter_create_time_start(client_with_token: AsyncClient):
+    params = {"createTimeStart": "2000-01-01 00:00:00"}
+    resp = await client_with_token.get('/item', params=params)
+    assert resp.status_code == 200
+    assert resp.json()['code'] == 0
+    assert resp.json()['result']['total'] > 10
+    assert len(resp.json()['result']['items']) == 10

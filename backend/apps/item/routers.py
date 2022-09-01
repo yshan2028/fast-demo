@@ -14,9 +14,8 @@ from starlette import status
 
 from backend.dependencies import check_permissions, PageSizePaginator
 from backend.schemas import FailResp, MultiResp, PageResp, SingleResp, SuccessResp
-from .dependencies import filter_items
 from .models import Item
-from .schemas import ItemCreate, ItemDetail, ItemInfo, ItemUpdate
+from .schemas import ItemCreate, ItemDetail, ItemFilter, ItemInfo, ItemUpdate
 
 router = APIRouter(prefix='/item', tags=['item接口'])
 
@@ -49,9 +48,10 @@ async def modify_item_by_id(item_id: int = Path(..., gt=0, description='Item ID'
 
 @router.get("", summary="查看 item 列表", response_model=PageResp[ItemInfo],
             dependencies=[Security(check_permissions, scopes=["list_item"])])
-async def list_item(pg: PageSizePaginator = Depends(PageSizePaginator(max_size=50)), filters=Depends(filter_items)):
+async def list_item(pg: PageSizePaginator = Depends(PageSizePaginator(max_size=50)),
+                    filters: ItemFilter = Depends(ItemFilter)):
     user_qs = Item.all()
-    page_data = await pg.output(user_qs, filters)
+    page_data = await pg.output(user_qs, filters.dict(exclude_none=True))
     return PageResp[ItemInfo](data=page_data)
 
 

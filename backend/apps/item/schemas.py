@@ -7,11 +7,11 @@
 # Project: fa-demo
 # IDE:     PyCharm
 from datetime import datetime
-from typing import List
 
+from fastapi import Query
 from pydantic import Field, validator
 
-from backend.schemas import ORMModel
+from backend.schemas import BaseFilter, ORMModel
 
 
 # =============================  input  ===============================
@@ -30,8 +30,8 @@ class ItemUpdate(ItemCreate):
     """ 修改 item 的信息"""
 
 
-class ItemCreateBulk(ORMModel):
-    __root__: List[ItemCreate]
+class ItemFilter(BaseFilter):
+    item_name__icontains: str = Query(None, alias='itemName')
 
 
 # =============================  output ===============================

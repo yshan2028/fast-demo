@@ -12,10 +12,10 @@ from backend.models import TortoiseBaseModel
 
 
 class {{ model_name }}(TortoiseBaseModel):
-""" 在这里写上模型的搭配信息 """
-{{ model_name_lower }}_name = fields.CharField(max_length=32, description="名称")
+    """ 在这里写上模型的搭配信息 """
+    {{ model_name_lower }}_name = fields.CharField(max_length=32, description="名称")
 
-def __str__(self):
-return f"{{ model_name }}({self.{{ model_name_lower }}_name}, {self.pk})"
+    def __str__(self):
+        return f"{{ model_name }}({self.{{ model_name_lower }}_name}, {self.pk})"
 
-__repr__ = __str__
+    __repr__ = __str__

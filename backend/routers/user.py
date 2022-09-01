@@ -17,8 +17,7 @@ from starlette.responses import StreamingResponse
 from ..config import settings
 from ..dependencies import (create_access_token, get_captcha_code, get_current_active_user, get_redis)
 from ..enums import OperationMethod as OpMethod, OperationObject as OpObject
-from ..models import User
-from ..models.base import OperationLog
+from ..models import OperationLog, User
 from ..schemas import (FailResp, LoginResult, ModifyInfo, ModifyPassword,
                        RoleInfoForLoginResp, SingleResp, SuccessResp, UserInfo,
                        UserLogin, UserRegister)

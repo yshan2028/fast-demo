@@ -13,12 +13,12 @@ from starlette.requests import Request
 from tortoise.queryset import F
 
 from ..decorators import cache
-from ..dependencies import (check_permissions, filter_logs, get_current_active_user, get_redis,
+from ..dependencies import (check_permissions, get_current_active_user, get_redis,
                             PageSizePaginator)
 from ..enums import OperationMethod as OpMethod, OperationObject as OpObject
 from ..models import Access, User
 from ..models.base import OperationLog
-from ..schemas import FailResp, MenuUpdate, MultiResp, OperationLogItem, PageResp, SuccessResp
+from ..schemas import FailResp, MenuUpdate, MultiResp, OperationLogFilter, OperationLogItem, PageResp, SuccessResp
 from ..utils import make_tree
 
 router = APIRouter(prefix='/access', tags=['权限管理'])
@@ -120,7 +120,8 @@ async def menu_update(req: Request, post: MenuUpdate, redis: Redis = Depends(get
 
 @router.get("/operation/logs", summary="查看日志", response_model=PageResp[OperationLogItem],
             dependencies=[Security(check_permissions, scopes=["logs_list"])])
-async def get_operation_logs(pg: PageSizePaginator = Depends(PageSizePaginator()), filters=Depends(filter_logs)):
+async def get_operation_logs(pg: PageSizePaginator = Depends(PageSizePaginator()),
+                             filters: OperationLogFilter = Depends(OperationLogFilter)):
     logs_qs = OperationLog.all()
-    page_data = await pg.output(logs_qs, filters)
+    page_data = await pg.output(logs_qs, filters.dict(exclude_none=True))
     return PageResp[OperationLogItem](data=page_data)

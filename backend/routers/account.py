@@ -13,11 +13,10 @@ from fastapi import APIRouter, Depends, Path, Request, Security
 from tortoise.exceptions import OperationalError
 from tortoise.transactions import in_transaction
 
-from ..dependencies import check_permissions, filter_users, get_redis, PageSizePaginator
+from ..dependencies import check_permissions, get_redis, PageSizePaginator
 from ..enums import OperationMethod as OpMethod, OperationObject as OpObject
-from ..models import Role, User
-from ..models.base import OperationLog
-from ..schemas import (AccountCreate, AccountInfo, AccountUpdate, FailResp, PageResp, SingleResp,
+from ..models import OperationLog, Role, User
+from ..schemas import (AccountCreate, AccountFilter, AccountInfo, AccountUpdate, FailResp, PageResp, SingleResp,
                        SuccessResp)
 
 router = APIRouter(prefix='/account', tags=['账号管理'])
@@ -25,9 +24,9 @@ router = APIRouter(prefix='/account', tags=['账号管理'])
 
 @router.get('', summary='账号列表', response_model=PageResp[AccountInfo],
             dependencies=[Security(check_permissions, scopes=["account_list"])])
-async def get_all_account(pg: PageSizePaginator = Depends(PageSizePaginator()), filters=Depends(filter_users)):
+async def get_all_account(pg: PageSizePaginator = Depends(PageSizePaginator()), filters=Depends(AccountFilter)):
     user_qs = User.all().prefetch_related('role')
-    page_data = await pg.output(user_qs, filters)
+    page_data = await pg.output(user_qs, filters.dict(exclude_none=True))
     return PageResp[AccountInfo](data=page_data)
 
 

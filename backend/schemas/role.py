@@ -9,9 +9,10 @@
 from datetime import datetime
 from typing import List, Optional
 
+from fastapi import Query
 from pydantic import BaseModel, Field
 
-from .base import ORMModel
+from .base import BaseFilter, ORMModel
 
 
 # -------------------------------  请求部分  ---------------------------------------------
@@ -35,15 +36,22 @@ class RoleStatus(BaseModel):
     status: bool
 
 
+class RoleFilter(BaseFilter):
+    """ 过滤角色 """
+    role_name__icontains: str = Query(None, alias='roleName')
+
+
 # -------------------------------  响应部分  ---------------------------------------------
 class RoleInfoForLoginResp(ORMModel):
     """ 角色信息 用于响应登陆接口 实际返回的是不是超管，只是不想改前端代码而已，实际没什么用 """
     role_name: str = Field(..., alias='roleName', description="用户组")
     value: str = Field(..., description='用户组值')
 
+
 class RoleInfoOptionItem(ORMModel):
     role_value: int = Field(..., alias='roleValue')
     role_name: str = Field(..., alias='roleName')
+
 
 class RoleInfo(ORMModel):
     """ 角色信息 """

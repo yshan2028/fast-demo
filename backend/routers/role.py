@@ -16,11 +16,11 @@ from tortoise.exceptions import OperationalError
 from tortoise.queryset import F
 from tortoise.transactions import in_transaction
 
-from ..dependencies import check_permissions, filter_roles, get_redis, PageSizePaginator
+from ..dependencies import check_permissions, get_redis, PageSizePaginator
 from ..enums import OperationMethod as OpMethod, OperationObject as OpObject
-from ..models import Access, Role, User
-from ..models.base import OperationLog
-from ..schemas import (CreateRole, FailResp, MultiResp, PageResp, RoleInfo, RoleInfoOptionItem, RoleStatus, SingleResp,
+from ..models import Access, OperationLog, Role, User
+from ..schemas import (CreateRole, FailResp, MultiResp, PageResp, RoleFilter, RoleInfo, RoleInfoOptionItem, RoleStatus,
+                       SingleResp,
                        SuccessResp,
                        UpdateRole)
 
@@ -99,7 +99,7 @@ async def update_role(req: Request, post: UpdateRole, rid: int = Path(..., gt=0)
                 accesses = await Access.filter(status=True, id__in=post.menu_values).all()
                 # 分配权限
                 await role.access.add(*accesses)
-            # 首页是必选的
+                # 首页是必选的
                 await OperationLog.add_log(req, req.state.user.id, OpObject.role, OpMethod.allocate_resources,
                                            f"分配权限({rid})")
             # home_menu = await Access.get(title='首页')
@@ -121,7 +121,7 @@ async def read_role(rid: int = Path(..., gt=0)):
 
 @router.get('', summary="角色列表", response_model=PageResp[RoleInfo],
             dependencies=[Security(check_permissions, scopes=["role_list"])])
-async def get_all_role(pg: PageSizePaginator() = Depends(), filters: dict = Depends(filter_roles)):
+async def get_all_role(pg: PageSizePaginator() = Depends(), filters: RoleFilter = Depends(RoleFilter)):
     role_qs = Role.all().annotate(role_value=F('id')).prefetch_related('access').order_by('order_no')
-    page_data = await pg.output(role_qs, filters)
+    page_data = await pg.output(role_qs, filters.dict(exclude_none=True))
     return PageResp[RoleInfo](data=page_data)

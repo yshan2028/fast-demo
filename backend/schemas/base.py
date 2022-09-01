@@ -6,9 +6,10 @@
 # File:    base.py
 # Project: fa-demo
 # IDE:     PyCharm
-
+from datetime import datetime
 from typing import Generic, List, Optional, Type, TypeVar
 
+from fastapi import Query
 from pydantic import BaseModel, Field
 from pydantic.generics import GenericModel
 from tortoise.queryset import QuerySet
@@ -32,7 +33,7 @@ class ORMModel(BaseModel):
         allow_population_by_field_name = True
 
     @classmethod
-    async def from_queryset(cls: Type['Model'], qs: QuerySet ) -> List["Model"]:
+    async def from_queryset(cls: Type['Model'], qs: QuerySet) -> List["Model"]:
         return [cls.from_orm(x) for x in await qs]
 
 
@@ -72,3 +73,10 @@ class PageData(GenericModel, Generic[DataT]):
 class PageResp(SuccessResp, Generic[DataT]):
     """ 分页响应 vben """
     data: PageData[DataT] = Field(..., description='响应的数据', alias='result')
+
+
+class BaseFilter(ORMModel):
+    """ 过滤的基础字段 """
+    status: Optional[bool] = Query(None, description="状态")
+    create_time__gte: Optional[datetime] = Query(None, alias="createTimeStart", description="创建时间-起点")
+    create_time__lte: Optional[datetime] = Query(None, alias="createTimeEnd", description="创建时间-终点")
