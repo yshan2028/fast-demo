@@ -34,12 +34,10 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
 async def get_user_or_none_by_token(token: str) -> Union[User, None]:
     try:
         payload = jwt.decode(token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm])
-        username: str = payload.get("sub")
-        if username is None:
-            return None
-    except jwt.ExpiredSignatureError:
-        return None
     except JWTError:
+        return None
+    username: str = payload.get("sub")
+    if username is None:
         return None
     user = await User.get_or_none(username=username)
     return user
