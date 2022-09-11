@@ -16,7 +16,7 @@ from ..config import settings
 from ..utils import random_str
 
 
-class BaseMiddleware:
+class ProcessTime:
     """
     Middleware
     """

@@ -7,9 +7,9 @@
 # Project: fa-demo
 # IDE:     PyCharm
 
-from .base_middleware import BaseMiddleware as BaseMiddleware
+from .base_middleware import ProcessTime as ProcessTime
 from .consume_body import ConsumeBodyMiddleware as ConsumeBodyMiddleware
-from .log_req_resp import LogRequestResponseMiddleware as LogRequestResponseMiddleware
+from .log_req_resp import LogReqResMiddleware as LogReqResMiddleware
 from .process_time import ProcessTimeMiddleware as ProcessTimeMiddleware
 from .set_session import SetSessionMiddleware as SetSessionMiddleware
 

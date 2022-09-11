@@ -15,7 +15,7 @@ from backend.config import settings
 logger = getLogger('fastapi')
 
 
-class LogRequestResponseMiddleware:
+class LogReqResMiddleware:
     def __init__(self, app: ASGIApp) -> None:
         """ 记录请求体和响应体 """
         self.app = app

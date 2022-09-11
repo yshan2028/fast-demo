@@ -11,6 +11,7 @@ from fastapi import APIRouter
 
 from .access import router as access_router
 from .account import router as account_router
+from .docs import custom_docs as custom_docs
 from .ping import router as ping_router
 from .role import router as role_router
 from .user import router as user_router
