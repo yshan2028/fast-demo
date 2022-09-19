@@ -23,7 +23,7 @@ from tortoise.functions import Max
 from tortoise.query_utils import Prefetch
 
 from ..config import settings
-from ..decorators import cache
+from ..decorators import auto_load_router, cache
 from ..dependencies import create_access_token, get_captcha_code, get_redis
 from ..models import User, UserProfile
 from ..schemas import FailResp, MultiResp, ORMModel, SuccessResp, Token
@@ -335,3 +335,8 @@ async def create_process():
     p = Process(target=task_process)
     p.start()
     return SuccessResp(data={'pid': p.pid})
+
+
+@auto_load_router(router, prefix="auto/load", table_name_list=['aaa', 'bbb', 'ccc'])
+def home(req: Request):
+    return {"url_path": req.url.path}
