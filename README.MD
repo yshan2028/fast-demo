@@ -10,6 +10,8 @@
 
 [演示站点](http://fastapi.rongli.vip)【 admin / a12345678 】
 
+[FastAPI 快速上手指南 - Bilibili视频](https://www.bilibili.com/video/BV1je4y1o7yX?vd_source=9f8f3da95270c6c4d6bafbe8da14beee)
+
 # 二、快速上手
 
 ## 1.下载代码
