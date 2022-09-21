@@ -180,7 +180,7 @@ def get_python_info():
 
 
 @router.get('/redis/get', summary='redis get 测试')
-async def redis_set(key: str = Query('key'), redis: Redis = Depends(get_redis)):
+async def redis_get(key: str = Query('key'), redis: Redis = Depends(get_redis)):
     data = await redis.get(key)
     return SuccessResp(data=data)
 
