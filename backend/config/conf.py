@@ -98,7 +98,7 @@ class Settings(BaseSettings):
 
     @property
     def tortoise_orm_model_modules(self) -> List[str]:
-        return ['aerich.models', 'backend.models', 'backend.apps']
+        return ['aerich.models', 'backend.models']
 
     @property
     def tortoise_orm_config(self) -> dict:
