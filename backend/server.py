@@ -21,7 +21,6 @@ from tortoise.exceptions import (DBConnectionError as MysqlConnectionError, Does
                                  IntegrityError as MysqlIntegrityError, OperationalError as MysqlOperationalError,
                                  ValidationError as MysqlValidationError)
 
-from .apps import apps_routers
 from .config import settings
 from .events import log_shutdown, log_startup, show_logo
 from .exceptions import (http422_error_handler, http_error_handler, mysql_connection_error, mysql_does_not_exist,
@@ -81,8 +80,6 @@ app.add_event_handler('shutdown', log_shutdown)
 
 # 挂载接口路由
 app.include_router(api_routers)
-# 挂载应用路由
-app.include_router(apps_routers)
 # 挂载视图路由
 app.include_router(view_routers)
 # 挂载 websocket 路由
