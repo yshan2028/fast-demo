@@ -10,10 +10,12 @@ import asyncio
 import datetime
 import os
 import random
+import sys
 import time
 from multiprocessing import Process
 from typing import Dict, List, Optional
 
+import fastapi
 from aioredis import Redis
 from fastapi import APIRouter, Cookie, Depends, File, Form, Header, Query, Request, UploadFile
 from fastapi.security import OAuth2PasswordRequestForm
@@ -165,6 +167,16 @@ async def tortoise_config():
 async def tortoise_models():
     data = {'tortoise_orm_model_modules': settings.tortoise_orm_model_modules}
     return SuccessResp(data=data)
+
+
+@router.get("/python", summary='python 相关信息')
+def get_python_info():
+    return {
+        "version": f"Python {sys.version} on {sys.platform}",
+        "sys.path": sys.path,
+        "fastapi": {"module": str(fastapi).replace("\\\\", "\\"),
+                    "version": fastapi.__version__, },
+        }
 
 
 @router.get('/redis/get', summary='redis get 测试')
