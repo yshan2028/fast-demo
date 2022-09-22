@@ -352,3 +352,9 @@ async def create_process():
 @auto_load_router(router, prefix="auto/load", table_name_list=['aaa', 'bbb', 'ccc'])
 def home(req: Request):
     return {"url_path": req.url.path}
+
+
+@router.get("/orm/describe", summary="查看模型的描述信息")
+def orm_describe():
+    desc = User.describe()
+    return {"desc": desc}

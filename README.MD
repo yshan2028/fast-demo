@@ -147,11 +147,11 @@ python manage.py user createroot --help
 >
 > 可以根据需要，自行修改配置
 
-## 问：`backend/routers/ping.py` 里面写了好多测试的接口，项目上线会不会造成安全问题？
+## 问：`backend/routers/dev.py` 里面写了好多测试的接口，项目上线会不会造成安全问题？
 
 > 不会。
 >
-> `backend/routers/__init__.py` 中第 21-22 行，ping.py中的接口，只有在`settings.enable_test_router==True` 时才有效
+> `backend/routers/__init__.py` 中第 21-22 行，dev.py中的接口，只有在`settings.enable_test_router==True` 时才有效
 >
 > 项目上线时，只要在相应的 env 文件中加入 `ENABLE_TEST_ROUTER=false`，这些接口就不会生效了
 >
@@ -174,7 +174,7 @@ python manage.py user createroot --help
 
 ## 问：`tortoise orm` 中如何使用原生sql？
 
-> `backend/routers/ping.py` 中有示例。
+> `backend/routers/dev.py` 中有示例。
 
 ## 问：`get_menulist` 命令，好奇怪，看不懂？有没有关于这个命令的解释？
 

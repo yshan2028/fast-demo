@@ -11,8 +11,8 @@ from fastapi import APIRouter
 
 from .access import router as access_router
 from .account import router as account_router
+from .dev import router as dev_router
 from .docs import custom_docs as custom_docs
-from .ping import router as ping_router
 from .role import router as role_router
 from .user import router as user_router
 from ..config import settings
@@ -20,7 +20,7 @@ from ..config import settings
 api_routers = APIRouter(prefix=settings.url_prefix)
 
 if settings.enable_test_router:
-    api_routers.include_router(ping_router)
+    api_routers.include_router(dev_router)
 
 api_routers.include_router(account_router)  # 用户中心
 
