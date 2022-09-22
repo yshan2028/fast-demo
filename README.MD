@@ -2,15 +2,29 @@
 
 > FastAPI 的小demo
 
+## 仓库地址
+
 感谢 **冰可乐** 大佬 [传送门](https://gitee.com/binkuolo/fastapi.git)
 
 [后端代码仓库](https://gitee.com/nhnhwsnh/fastapi_demo)
 
 [前端代码仓库](https://gitee.com/nhnhwsnh/vben_admin_demo)
 
-[演示站点](http://fastapi.rongli.vip)【 admin / a12345678 】
-
 [FastAPI 快速上手指南 - Bilibili视频](https://www.bilibili.com/video/BV1je4y1o7yX?vd_source=9f8f3da95270c6c4d6bafbe8da14beee)
+
+## 演示站点
+
+[本项目演示站点](http://fastapi.rongli.vip)【账号 admin / 密码 a12345678 】
+
+[冰可乐大佬的演示站点](118.89.184.221)【账号: admin 密码:123456】 **本站点由小Q提供并管理**
+
+## 技术交流群
+
+> 本群啥都可以聊Python，fastapi，js，vue，运维，数据库，人生，未来，感情.....，严禁开车，严禁广告，一次警告，两次拜拜！
+
+![wechat](./docs/images/wechat.png)
+
+**如果二维码过期，可以通过各种途径通知我**
 
 # 二、快速上手
 
@@ -192,4 +206,5 @@ python manage.py user createroot --help
 ## 问：我可以提个 pr 吗？
 
 > 首先很感谢您对我的支持！
-> 但是，此仓库是个镜像仓库，不接受pr，有事情可以提issue！
+
+> 但是，此仓库是个镜像仓库，不接受pr，有事情可以提issue 或者 群内交流！
