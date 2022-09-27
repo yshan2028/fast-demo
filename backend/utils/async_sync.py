@@ -18,7 +18,7 @@ from ..config import settings
 
 
 def sync_to_async(func: Callable):
-    """ 把同步任务转为异步的线程去执行 此处借用了 run_in_threadpool """
+    """ 把同步任务转为异步的线程去执行 此处借用了 run_in_threadpool，经大佬提醒此方法的实际并发量可能受到线程池的限制！！！ """
 
     @functools.wraps(func)
     async def wrapper(*args, **kwargs):
