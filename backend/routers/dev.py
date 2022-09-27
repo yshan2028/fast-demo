@@ -12,6 +12,7 @@ import os
 import random
 import sys
 import time
+from mimetypes import guess_type
 from multiprocessing import Process
 from typing import Dict, List, Optional
 
@@ -20,6 +21,7 @@ from aioredis import Redis
 from fastapi import APIRouter, Cookie, Depends, File, Form, Header, Query, Request, UploadFile
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import Field, parse_obj_as, validator
+from starlette.responses import Response
 from tortoise import Tortoise
 from tortoise.functions import Max
 from tortoise.query_utils import Prefetch
@@ -358,3 +360,12 @@ def home(req: Request):
 def orm_describe():
     desc = User.describe()
     return {"desc": desc}
+
+
+@router.get("/show/image", summary="响应图片")
+def orm_describe():
+    image_path = settings.media_dir / 'avatar/2022/08/22/2019-10-09_20-30-26_e27850c948572a0aa1082c9cc74e7b9b.png'
+    if not image_path.exists():
+        return {"msg": "文件不存在"}
+    media_type, _ = guess_type(image_path)
+    return Response(image_path.read_bytes(), media_type=media_type)

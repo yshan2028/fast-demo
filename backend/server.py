@@ -27,7 +27,7 @@ from .exceptions import (http422_error_handler, http_error_handler, mysql_connec
                          mysql_integrity_error,
                          mysql_operational_error, mysql_validation_error, redis_connection_error,
                          unicorn_exception_handler, UnicornException)
-from .middlewares import LogReqResMiddleware, ProcessTimeMiddleware, SetSessionMiddleware
+from .middlewares import ProcessTimeMiddleware, SetSessionMiddleware
 from .routers import api_routers, custom_docs
 from .views import view_routers
 from .websocket import ws_router
@@ -58,7 +58,7 @@ app.add_exception_handler(RedisConnectionError, redis_connection_error)
 
 # 注册中间件，先注册的在内层, 洋葱模型
 app.add_middleware(ProcessTimeMiddleware)
-app.add_middleware(LogReqResMiddleware)
+# app.add_middleware(LogReqResMiddleware)
 app.add_middleware(SetSessionMiddleware)
 app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins,
                    allow_credentials=settings.cors_allow_credentials,
