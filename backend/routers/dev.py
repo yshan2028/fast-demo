@@ -372,7 +372,7 @@ def orm_describe():
 
 
 @router.get("/start/filter", summary="自动生成的过滤类")
-def orm_describe(filters: UserFilterForDev = Depends(UserFilterForDev)):
+def start_filter(filters: UserFilterForDev = Depends(UserFilterForDev)):
     """某些情况下 None 也可能是一个合法的参数，所以 exclude_defaults 更好"""
     return {
         "exclude_defaults": filters.dict(exclude_defaults=True),
