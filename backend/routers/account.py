@@ -24,9 +24,10 @@ router = APIRouter(prefix='/account', tags=['账号管理'])
 
 @router.get('', summary='账号列表', response_model=PageResp[AccountInfo],
             dependencies=[Security(check_permissions, scopes=["account_list"])])
-async def get_all_account(pg: PageSizePaginator = Depends(PageSizePaginator()), filters=Depends(AccountFilter)):
+async def get_all_account(pg: PageSizePaginator = Depends(PageSizePaginator()),
+                          filters: AccountFilter = Depends(AccountFilter)):
     user_qs = User.all().prefetch_related('role')
-    page_data = await pg.output(user_qs, filters.dict(exclude_none=True))
+    page_data = await pg.output(user_qs, filters.dict(exclude_defaults=True))
     return PageResp[AccountInfo](data=page_data)
 
 

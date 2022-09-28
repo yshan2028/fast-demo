@@ -105,12 +105,19 @@ python manage.py run server --host 127.0.0.1 --port 8888
 python manage.py user createroot --help
 ```
 
-## startapp
+## start app
 
 > 快速生成 app，不用重复的写CRUD
 
 当前处于测试阶段
 具体用法 -》 [传送门](./docs/startapp.md)
+
+## start filter
+
++ 生成查询过滤的模型。
++ 生成内容请看： [backend/schemas/filter_for_dev.py](./backend/schemas/filter_for_dev.py)
++ 使用方法请看： [backend/routers/dev.py](./backend/routers/dev.py)
++ 演示接口：GET /api/v1/test/start/filter
 
 # 四、aerich 使用方法
 

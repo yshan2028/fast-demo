@@ -9,7 +9,7 @@
 from typer import Typer
 
 from .run import app as run_app
-from .start_app import app as start_app
+from .start import app as start_app
 from .user import app as user_app
 
 all_apps = Typer()

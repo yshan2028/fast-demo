@@ -30,7 +30,7 @@ from ..config import settings
 from ..decorators import auto_load_router, cache
 from ..dependencies import create_access_token, get_captcha_code, get_redis
 from ..models import User, UserProfile
-from ..schemas import FailResp, MultiResp, ORMModel, SuccessResp, Token
+from ..schemas import FailResp, MultiResp, ORMModel, SuccessResp, Token, UserFilterForDev
 from ..utils import random_str, sync_to_async
 
 router = APIRouter(prefix='/test', tags=['测试'])
@@ -369,3 +369,13 @@ def orm_describe():
         return {"msg": "文件不存在"}
     media_type, _ = guess_type(image_path)
     return Response(image_path.read_bytes(), media_type=media_type)
+
+
+@router.get("/start/filter", summary="自动生成的过滤类")
+def orm_describe(filters: UserFilterForDev = Depends(UserFilterForDev)):
+    """某些情况下 None 也可能是一个合法的参数，所以 exclude_defaults 更好"""
+    return {
+        "exclude_defaults": filters.dict(exclude_defaults=True),
+        "exclude_unset": filters.dict(exclude_unset=True),
+        "exclude_none": filters.dict(exclude_none=True),
+        }

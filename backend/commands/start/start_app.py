@@ -11,12 +11,10 @@ import re
 from typing import List
 
 from jinja2 import Environment, PackageLoader
-from typer import prompt, secho, Typer
+from typer import prompt, secho
 from typer.colors import GREEN, RED
 
 from backend.config import settings
-
-app = Typer()
 
 
 def check_dir(app_name):
@@ -35,7 +33,6 @@ def check_values(values: List[str]):
             raise ValueError(f"输入的名称不能包含空格或者TAB,{v}")
 
 
-@app.command(name='app', help='start a new app')
 def start_app():
     app_name: str = prompt("请输入 App 的名字，请使用小写下划线命名")
     dir_path = check_dir(app_name)

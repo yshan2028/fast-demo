@@ -123,5 +123,5 @@ async def read_role(rid: int = Path(..., gt=0)):
             dependencies=[Security(check_permissions, scopes=["role_list"])])
 async def get_all_role(pg: PageSizePaginator() = Depends(), filters: RoleFilter = Depends(RoleFilter)):
     role_qs = Role.all().annotate(role_value=F('id')).prefetch_related('access').order_by('order_no')
-    page_data = await pg.output(role_qs, filters.dict(exclude_none=True))
+    page_data = await pg.output(role_qs, filters.dict(exclude_defaults=True))
     return PageResp[RoleInfo](data=page_data)
