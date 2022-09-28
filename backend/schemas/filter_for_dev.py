@@ -162,6 +162,22 @@ class UserFilterForDev(ORMModel):
     full_name__iendswith: Optional[str] = Query(None, alias='full_name__iendswith', description='姓名 - iendswith')
     full_name__iexact: Optional[str] = Query(None, alias='full_name__iexact', description='姓名 - iexact')
     full_name__search: Optional[str] = Query(None, alias='full_name__search', description='姓名 - search')
+
+    is_superuser: Optional[bool] = Query(None, alias='is_superuser', description='是否为超级管理员')
+    is_superuser__isnull: Optional[bool] = Query(None, alias='is_superuser__isnull',
+                                                 description='是否为超级管理员 - isnull')
+    is_superuser__not_isnull: Optional[bool] = Query(None, alias='is_superuser__not_isnull',
+                                                     description='是否为超级管理员 - not_isnull')
+
+    head_img: Optional[str] = Query(None, alias='head_img', description='头像')
+    head_img__isnull: Optional[bool] = Query(None, alias='head_img__isnull', description='头像 - isnull')
+    head_img__not_isnull: Optional[bool] = Query(None, alias='head_img__not_isnull', description='头像 - not_isnull')
+    head_img__not: Optional[str] = Query(None, alias='head_img__not', description='头像 - not')
+    head_img__contains: Optional[str] = Query(None, alias='head_img__contains', description='头像 - contains')
+    head_img__icontains: Optional[str] = Query(None, alias='head_img__icontains', description='头像 - icontains')
+    head_img__startswith: Optional[str] = Query(None, alias='head_img__startswith', description='头像 - startswith')
+    head_img__istartswith: Optional[str] = Query(None, alias='head_img__istartswith', description='头像 - istartswith')
+    head_img__endswith: Optional[str] = Query(None, alias='head_img__endswith', description='头像 - endswith')
     head_img__iendswith: Optional[str] = Query(None, alias='head_img__iendswith', description='头像 - iendswith')
     head_img__iexact: Optional[str] = Query(None, alias='head_img__iexact', description='头像 - iexact')
     head_img__search: Optional[str] = Query(None, alias='head_img__search', description='头像 - search')
