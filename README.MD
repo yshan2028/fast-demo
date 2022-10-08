@@ -22,7 +22,7 @@
 
 > 本群啥都可以聊Python，fastapi，js，vue，运维，数据库，人生，未来，感情.....，严禁开车，严禁广告，一次警告，两次拜拜！
 
-![wechat](./docs/images/wechat.png)
+![wechat](./docs/images/wechat.jpg)
 
 **如果二维码过期，可以通过各种途径通知我**
 
