@@ -7,7 +7,7 @@
 # Project: fa-demo
 # IDE:     PyCharm
 import re
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import BaseModel, Field, validator
 
@@ -90,6 +90,7 @@ class ModifyInfo(BaseModel):
 class Token(ORMModel):
     access_token: str = Field(..., alias='accessToken')
     token_type: str = Field(..., alias='tokenType')
+    scope: Optional[List[str]]
 
 
 class UserInfo(ORMModel):

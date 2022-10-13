@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Oauth Authorize</title>
+</head>
+<body>
+<script src="{{ url_for('static', path='/js/axios.min.js') }}"></script>
+<h1>Oauth Authorize</h1>
+<h2>通过授权中心登陆 -> {{ app_name }}</h2>
+<div id="auth" style="display: none">
+  <h2>请点下方的按钮进行授权</h2>
+  <button onclick="authorize()">同意授权</button>
+</div>
+<div id="login" style="display: block">
+  <h2>请先登陆</h2>
+  <input type="text" id="username" placeholder="请输入用户名">
+  <input type="password" id="password" placeholder="请输入密码">
+  <button onclick="login()">登陆</button>
+</div>
+<script>
+    function authorize() {
+        axios.post('/oauth/code', {}, {
+            headers: {
+                'Authorization': 'bearer ' + localStorage.getItem('token')
+            },
+            params: {
+                response_type: "{{ response_type }}",
+                client_id: "{{ client_id }}",
+                redirect_uri: "{{ redirect_uri }}",
+                scope: "{{ scope }}",
+                state: "{{ state }}",
+            }
+        }).then(function (response) {
+            console.log(response.data)
+            const {redirect_uri, code, state} = response.data
+            window.location.href = `${redirect_uri}?code=${code}&state=${state}`
+        }).catch(function (error) {
+            console.log(error);
+            {#localStorage.removeItem('token')#}
+        });
+    }
+
+    function login() {
+        axios.post('{{ login_url }}', {
+            username: document.querySelector("#username").value,
+            password: document.querySelector("#password").value
+        }, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        }).then(function (response) {
+            console.log(response.data)
+            if (response.data && response.data.access_token) {
+                token = response.data.access_token
+                localStorage.setItem('token', token)
+                document.querySelector("#auth").style = "display: block"
+                document.querySelector("#login").style = "display: none"
+            }
+        }).catch(function (error) {
+            console.log(error);
+            localStorage.removeItem('token')
+            alert("登陆失败")
+        });
+    }
+
+    let token = localStorage.getItem('token')
+    if (token) {
+        document.querySelector("#auth").style = "display: block"
+        document.querySelector("#login").style = "display: none"
+        {#authorize()#}
+    } else {
+        document.querySelector("#auth").style = "display: none"
+        document.querySelector("#login").style = "display: block"
+    }
+</script>
+</body>
+
+</html>
