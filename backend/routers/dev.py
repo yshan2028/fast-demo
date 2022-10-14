@@ -34,7 +34,7 @@ from ..models import User, UserProfile
 from ..schemas import FailResp, MultiResp, ORMModel, SuccessResp, Token, UserFilterForDev
 from ..utils import random_str, sync_to_async
 
-router = APIRouter(prefix='/dev', tags=['开发时调试用的接口'])
+router = APIRouter(prefix='/test', tags=['开发时调试用的接口'])
 
 # 这一段是为了测试 带记录请求体和响应体的 LoggingAPIRouter
 
