@@ -7,11 +7,13 @@
 # Project: fa-demo
 # IDE:     PyCharm
 import datetime
-import logging
+
+from loguru import logger
 
 from ..config import settings
 
-logger = logging.getLogger('fastapi')
+
+# logger = logging.getLogger('fastapi')
 
 
 def log_startup():
@@ -20,4 +22,4 @@ def log_startup():
 
 def show_logo():
     logo_path = settings.base_dir / 'logo.txt'
-    logger.info(logo_path.read_text(encoding='utf8'))
+    logger.debug(logo_path.read_text(encoding='utf8'))

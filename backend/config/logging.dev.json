@@ -23,64 +23,45 @@
             "formatter": "standard",
             "stream": "ext://sys.stdout"
         },
-        "file": {
-            "level": "INFO",
-            "class": "logging.handlers.TimedRotatingFileHandler",
-            "filename": "./logs/fastapi.log",
-            "when": "MIDNIGHT",
-            "backupCount": 100,
-            "formatter": "standard",
-            "encoding": "utf-8"
+        "loguru": {
+            "class": "backend.utils.loguru_handler.InterceptHandler"
         }
     },
     "loggers": {
         "fastapi": {
             "handlers": [
-                "stdout",
-                "file"
+                "loguru"
             ],
             "level": "DEBUG"
         },
         "tortoise": {
             "handlers": [
-                "stderr",
-                "file"
+                "loguru"
             ],
-            "level": "DEBUG"
-        },
-        "tortoise.db_client": {
-            "handlers": [
-                "stdout",
-                "file"
-            ],
-            "level": "DEBUG"
+            "level": "WARNING"
         },
         "apscheduler": {
             "handlers": [
-                "stdout",
-                "file"
+                "loguru"
             ],
-            "level": "DEBUG"
+            "level": "INFO"
         },
         "uvicorn": {
             "handlers": [
-                "stdout",
-                "file"
+                "loguru"
             ],
-            "level": "DEBUG"
+            "level": "INFO"
         },
         "uvicorn.error": {
             "handlers": [
-                "stderr",
-                "file"
+                "loguru"
             ],
             "level": "INFO",
             "propagate": false
         },
         "uvicorn.access": {
             "handlers": [
-                "stdout",
-                "file"
+                "loguru"
             ],
             "level": "INFO",
             "propagate": false

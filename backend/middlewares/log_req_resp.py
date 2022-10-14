@@ -6,13 +6,14 @@
 # File:    log_req_resp.py
 # Project: fa-demo
 # IDE:     PyCharm
-from logging import getLogger
 
+from loguru import logger
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 from backend.config import settings
 
-logger = getLogger('fastapi')
+
+# logger = getLogger('fastapi')
 
 
 class LogReqResMiddleware:

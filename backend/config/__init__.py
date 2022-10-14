@@ -6,6 +6,7 @@
 # File:    __init__.py.py
 # Project: fa-demo
 # IDE:     PyCharm
+
 from .conf import Settings
 
 settings = Settings()

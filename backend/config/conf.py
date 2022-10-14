@@ -7,6 +7,7 @@
 # Project: fa-demo
 # IDE:     PyCharm
 import os
+import sys
 from pathlib import Path
 from typing import List
 
@@ -123,4 +124,38 @@ class Settings(BaseSettings):
                 },
             'use_tz': False,
             'timezone': 'Asia/Shanghai'
+            }
+
+    @property
+    def loguru_config(self):
+        return {
+            "handlers": [
+                {
+                    "sink": sys.stdout,
+                    "level": "DEBUG",
+                    "format": "<green>{time:YYYY-mm-dd HH:mm:ss.SSS}</green> | {thread.name} | "
+                              "<level>{level}</level> | "
+                              "<cyan>{module}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - "
+                              "<level>{message}</level>"
+                    },
+                {
+                    "sink": self.log_dir / 'fastapi.log',
+                    "level": "INFO",
+                    "rotation": "10 MB",
+                    "retention": "1 week",
+                    "encoding": 'utf-8',
+                    "format": "{time:YYYY-mm-dd HH:mm:ss.SSS} | {thread.name} | {level} | "
+                              "{module} : {function}:{line} -  {message}"
+                    },
+                {
+                    "sink": self.log_dir / 'fastapi-error.log',
+                    "serialize": True,
+                    "level": 'ERROR',
+                    "retention": "1 week",
+                    "rotation": "10 MB",
+                    "encoding": 'utf-8',
+                    "format": "{time:YYYY-mm-dd HH:mm:ss.SSS} | {thread.name} | {level} | "
+                              "{module} : {function}:{line} -  {message}"
+                    },
+                ],
             }

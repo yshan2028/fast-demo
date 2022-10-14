@@ -6,12 +6,14 @@
 # File:    main.py.py
 # Project: fa-demo
 # IDE:     PyCharm
+import logging
 
 from aioredis.exceptions import ConnectionError as RedisConnectionError
 from fastapi import FastAPI
 from fastapi.exceptions import HTTPException, RequestValidationError
 from fastapi.responses import ORJSONResponse
 from fastapi.templating import Jinja2Templates
+from loguru import logger
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
@@ -31,6 +33,17 @@ from .middlewares import ProcessTimeMiddleware, SetSessionMiddleware
 from .routers import api_routers, custom_docs
 from .views import view_routers
 from .websocket import ws_router
+
+# 配置日志器
+logger.configure(**settings.loguru_config)
+# 获取当前所有日志器的名字
+logger_name_list = [name for name in logging.root.manager.loggerDict]
+logger.debug(sorted(logger_name_list))
+# logger.debug('debug')
+# logger.info('info')
+# logger.warning('warning')
+# logger.error('error')
+# logger.critical('critical')
 
 # 创建 FastAPI 对象
 app = FastAPI(debug=settings.debug,

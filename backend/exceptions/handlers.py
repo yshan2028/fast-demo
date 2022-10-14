@@ -13,13 +13,13 @@
 @Des: 异常处理
 """
 
-from logging import getLogger
 from typing import Union
 
 from aioredis.exceptions import ConnectionError as RedisConnectionError
 from fastapi import HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from loguru import logger
 from pydantic import ValidationError
 from tortoise.exceptions import (DBConnectionError as MysqlConnectionError, DoesNotExist as MysqlDoesNotExist,
                                  IntegrityError as MysqlIntegrityError, OperationalError as MysqlOperationalError,
@@ -29,7 +29,8 @@ from .exc import UnicornException
 from ..config import settings
 from ..schemas import FailResp
 
-logger = getLogger('fastapi')
+
+# logger = getLogger('fastapi')
 
 
 async def redis_connection_error(_: Request, exc: RedisConnectionError):

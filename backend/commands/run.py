@@ -9,6 +9,7 @@
 import os
 
 import uvicorn
+from loguru import logger
 from starlette.routing import Mount
 from typer import Typer
 
@@ -24,12 +25,15 @@ app = Typer()
 def run_server(host: str = settings.server_host, port: int = settings.server_port):
     project_env = 'prod' if os.getenv('PROJECT_ENV') == 'prod' else 'dev'
     log_config_path = str(settings.base_dir / 'backend' / 'config' / f'logging.{project_env}.json')
-    uvicorn.run(app='backend.server:app',
-                host=host,
-                port=port,
-                reload=settings.debug,
-                reload_dirs=["backend"],
-                log_config=log_config_path)
+    config = uvicorn.Config(app='backend.server:app',
+                            host=host,
+                            port=port,
+                            reload=settings.debug,
+                            reload_dirs=["backend"],
+                            log_config=log_config_path)
+    logger.info(f"uvicorn config: {config.__dict__}")
+    server = uvicorn.Server(config)
+    server.run()
 
 
 @app.command(name='get_menulist', help='get_menulist')

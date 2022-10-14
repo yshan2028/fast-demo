@@ -7,9 +7,11 @@
 # Project: fa-demo
 # IDE:     PyCharm
 import datetime
-import logging
 
-logger = logging.getLogger('fastapi')
+from loguru import logger
+
+
+# logger = logging.getLogger('fastapi')
 
 
 def log_shutdown():
