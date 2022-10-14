@@ -38,12 +38,13 @@ from .websocket import ws_router
 logger.configure(**settings.loguru_config)
 # 获取当前所有日志器的名字
 logger_name_list = [name for name in logging.root.manager.loggerDict]
-logger.debug(sorted(logger_name_list))
+logger.debug(f"logger_name_list: {sorted(logger_name_list)}")
 # logger.debug('debug')
 # logger.info('info')
 # logger.warning('warning')
 # logger.error('error')
 # logger.critical('critical')
+
 
 # 创建 FastAPI 对象
 app = FastAPI(debug=settings.debug,

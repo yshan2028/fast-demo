@@ -6,6 +6,7 @@
 # File:    runserver.py
 # Project: fa-demo
 # IDE:     PyCharm
+import json
 import os
 
 import uvicorn
@@ -23,17 +24,41 @@ app = Typer()
 
 @app.command(name='server', help='start uvicorn server')
 def run_server(host: str = settings.server_host, port: int = settings.server_port):
+    # 获取日志配置文件的路径
     project_env = 'prod' if os.getenv('PROJECT_ENV') == 'prod' else 'dev'
     log_config_path = str(settings.base_dir / 'backend' / 'config' / f'logging.{project_env}.json')
-    config = uvicorn.Config(app='backend.server:app',
-                            host=host,
-                            port=port,
-                            reload=settings.debug,
-                            reload_dirs=["backend"],
-                            log_config=log_config_path)
-    logger.info(f"uvicorn config: {config.__dict__}")
+    # 配置 uvicorn
+    config = uvicorn.Config(
+            app='backend.server:app',
+            host=host,
+            port=port,
+            reload=settings.debug,
+            reload_dirs=["backend"],
+            log_config=log_config_path
+    )
+    # 记录配置
+    if settings.debug:
+        config_json = json.dumps(config.__dict__,
+                                 sort_keys=True,
+                                 ensure_ascii=False,
+                                 indent=2,
+                                 default=lambda o: str(o))
+        logger.debug(f"uvicorn config: \n{config_json}")
+    else:
+        logger.info(f"uvicorn config: {config.__dict__}")
+    # 启动uvicorn
     server = uvicorn.Server(config)
     server.run()
+
+    # 这种方法不能记录uvicorn的配置，不便于调试
+    # uvicorn.run(
+    #         app='backend.server:app',
+    #         host=host,
+    #         port=port,
+    #         reload=settings.debug,
+    #         reload_dirs=["backend"],
+    #         log_config=log_config_path
+    # )
 
 
 @app.command(name='get_menulist', help='get_menulist')

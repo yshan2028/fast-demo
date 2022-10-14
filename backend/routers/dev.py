@@ -18,7 +18,7 @@ from typing import Dict, List, Optional
 
 import fastapi
 from aioredis import Redis
-from fastapi import APIRouter, Cookie, Depends, File, Form, Header, Query, Request, UploadFile
+from fastapi import APIRouter, Body, Cookie, Depends, File, Form, Header, Query, Request, UploadFile
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import Field, parse_obj_as, validator
 from starlette.responses import Response
@@ -27,14 +27,41 @@ from tortoise.functions import Max
 from tortoise.query_utils import Prefetch
 
 from ..config import settings
+from ..core.routing import LoggingAPIRouter
 from ..decorators import auto_load_router, cache
 from ..dependencies import create_access_token, get_captcha_code, get_redis
 from ..models import User, UserProfile
 from ..schemas import FailResp, MultiResp, ORMModel, SuccessResp, Token, UserFilterForDev
 from ..utils import random_str, sync_to_async
 
-router = APIRouter(prefix='/test', tags=['测试'])
+router = APIRouter(prefix='/dev', tags=['开发时调试用的接口'])
 
+# 这一段是为了测试 带记录请求体和响应体的 LoggingAPIRouter
+
+# LoggingAPIRouter 用法
+# LoggingAPIRouter 可以接受的参数和 APIRouter一样
+# 你甚至可以 from ..core.routing import LoggingAPIRouter as APIRouter
+# 直接替换原来的 APIRouter 这样几乎不用改动代码就实现了记录功能
+
+# 如果需要修改记录的内容
+# 可以自行修改 backend/core/routing.py 的 LoggingRoute
+# 注意 LoggingRoute 末尾没有 r
+# LoggingRoute, LoggingRouter 这两个不一样的
+# 官方文档的地址：https://fastapi.tiangolo.com/advanced/custom-request-and-route/
+
+
+router_logging = LoggingAPIRouter()
+
+
+@router_logging.post('/logging', summary="记录请求体和响应体")
+def logging_body(b: str = Body(...)):
+    return dict(b=b)
+
+
+router.include_router(router_logging)
+
+
+# ########################################################
 
 @router.get('/ping', summary='ping')
 async def ping(req: Request):
@@ -178,7 +205,7 @@ def get_python_info():
         "sys.path": sys.path,
         "fastapi": {"module": str(fastapi).replace("\\\\", "\\"),
                     "version": fastapi.__version__, },
-        }
+    }
 
 
 @router.get('/redis/get', summary='redis get 测试')
@@ -332,7 +359,7 @@ async def execute_raw_sql():
         'execute_query': await conn.execute_query(select_sql),
         'execute_query_dict': await conn.execute_query_dict(select_sql),
         'execute_script': await conn.execute_script(select_sql),
-        }
+    }
     return SuccessResp(data=res)
 
 
@@ -378,4 +405,4 @@ def start_filter(filters: UserFilterForDev = Depends(UserFilterForDev)):
         "exclude_defaults": filters.dict(exclude_defaults=True),
         "exclude_unset": filters.dict(exclude_unset=True),
         "exclude_none": filters.dict(exclude_none=True),
-        }
+    }
