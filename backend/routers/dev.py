@@ -23,6 +23,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import Field, parse_obj_as, validator
 from starlette.responses import Response
 from tortoise import Tortoise
+from tortoise.expressions import F
 from tortoise.functions import Max
 from tortoise.query_utils import Prefetch
 
@@ -406,3 +407,15 @@ def start_filter(filters: UserFilterForDev = Depends(UserFilterForDev)):
         "exclude_unset": filters.dict(exclude_unset=True),
         "exclude_none": filters.dict(exclude_none=True),
     }
+
+
+class UserAnnotate(ORMModel):
+    id: int
+    name: str
+
+
+@router.get('/orm/annotate', response_model=UserAnnotate)
+async def annotate():
+    lan = 'user' + 'name'
+    user = await User.annotate(**{'name': F(lan)}).first()
+    return user
