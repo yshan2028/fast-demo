@@ -27,13 +27,32 @@ def run_server(host: str = settings.server_host, port: int = settings.server_por
     # 获取日志配置文件的路径
     project_env = 'prod' if os.getenv('PROJECT_ENV') == 'prod' else 'dev'
     log_config_path = str(settings.base_dir / 'backend' / 'config' / f'logging.{project_env}.json')
+    uvicorn.run(
+            app='backend.server:app',
+            host=host,
+            port=port,
+            reload=settings.debug,
+            reload_dirs=["backend"],
+            log_config=log_config_path
+    )
+
+
+@app.command(name='server_c', help='start uvicorn server and show config')
+def run_server_c(host: str = settings.server_host, port: int = settings.server_port):
+    """
+    这种方式启动，就不能自动 reload 了，reload的具体实现参见 uvicorn.run 函数
+    """
+    # 获取日志配置文件的路径
+    project_env = 'prod' if os.getenv('PROJECT_ENV') == 'prod' else 'dev'
+    log_config_path = str(settings.base_dir / 'backend' / 'config' / f'logging.{project_env}.json')
     # 配置 uvicorn
     config = uvicorn.Config(
             app='backend.server:app',
             host=host,
             port=port,
             reload=settings.debug,
-            reload_dirs=["backend"],
+            reload_dirs=[str(settings.base_dir / "backend")],
+            reload_includes=['*.py'],
             log_config=log_config_path
     )
     # 记录配置
@@ -49,16 +68,6 @@ def run_server(host: str = settings.server_host, port: int = settings.server_por
     # 启动uvicorn
     server = uvicorn.Server(config)
     server.run()
-
-    # 这种方法不能记录uvicorn的配置，不便于调试
-    # uvicorn.run(
-    #         app='backend.server:app',
-    #         host=host,
-    #         port=port,
-    #         reload=settings.debug,
-    #         reload_dirs=["backend"],
-    #         log_config=log_config_path
-    # )
 
 
 @app.command(name='get_menulist', help='get_menulist')
