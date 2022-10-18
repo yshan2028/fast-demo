@@ -22,13 +22,13 @@ async def test_ping(client: AsyncClient):
 
 @pytest.mark.anyio
 async def test_time(client: AsyncClient):
-    response = await client.get('/test/time')
+    response = await client.get('/test/system/time')
     assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.anyio
 async def test_sleep(client: AsyncClient):
-    response = await client.get('/test/sleep')
+    response = await client.get('/test/ping/sleep')
     assert response.status_code == status.HTTP_200_OK
 
 

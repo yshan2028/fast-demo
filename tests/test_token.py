@@ -9,6 +9,7 @@
 import pytest
 from httpx import AsyncClient
 
+from backend.config import settings
 from backend.models import User
 
 
@@ -21,7 +22,7 @@ async def test_token(client: AsyncClient):
     await user.set_password(password)
 
     data = {"username": username, "password": password}
-    response = await client.post("/test/token", data=data)
+    response = await client.post(settings.oauth2_token_url.replace(settings.url_prefix, ''), data=data)
     assert response.status_code == 200
     assert response.json().get('token_type') == 'bearer'
     assert response.json().get('access_token')

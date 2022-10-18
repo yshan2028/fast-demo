@@ -46,7 +46,7 @@ async def client():
 @pytest.fixture(scope="session")
 async def client_with_token(client: AsyncClient):
     data = {"username": username, "password": password}
-    response = await client.post("/test/token", data=data)
+    response = await client.post(settings.oauth2_token_url.replace(settings.url_prefix, ''), data=data)
     token_type = response.json().get('token_type')
     access_token = response.json().get('access_token')
     client.headers['Authorization'] = f"{token_type} {access_token}"

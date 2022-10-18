@@ -17,7 +17,7 @@ from starlette import status
 from ..config import settings
 from ..models import User
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl=settings.swagger_ui_oauth2_redirect_url)
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl=settings.oauth2_token_url)
 
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:

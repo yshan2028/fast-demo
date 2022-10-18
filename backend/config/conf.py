@@ -42,7 +42,10 @@ class Settings(BaseSettings):
     enable_test_router: bool = True
 
     #  swagger docs 的登陆重定向地址
-    swagger_ui_oauth2_redirect_url: str = url_prefix + '/test/token'
+    swagger_ui_oauth2_redirect_url: str = '/docs/oauth2-redirect'
+
+    # /docs 获取 token 的 url
+    oauth2_token_url: str = url_prefix + "/test/auth/token"
 
     # 项目根目录
     base_dir = Path(__file__).absolute().parent.parent.parent
@@ -113,18 +116,18 @@ class Settings(BaseSettings):
                         "user": self.mysql_user,
                         "password": self.mysql_password,
                         "database": self.mysql_database,
-                        }
                     }
-                },
+                }
+            },
             "apps": {
                 "base": {
                     "models": self.tortoise_orm_model_modules,
                     "default_connection": "default"
-                    }
-                },
+                }
+            },
             'use_tz': False,
             'timezone': 'Asia/Shanghai'
-            }
+        }
 
     @property
     def loguru_config(self):
@@ -137,7 +140,7 @@ class Settings(BaseSettings):
                               "<level>{level}</level> | "
                               "<cyan>{module}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - "
                               "<level>{message}</level>"
-                    },
+                },
                 {
                     "sink": self.log_dir / 'fastapi.log',
                     "level": "INFO",
@@ -146,7 +149,7 @@ class Settings(BaseSettings):
                     "encoding": 'utf-8',
                     "format": "{time:YYYY-mm-dd HH:mm:ss.SSS} | {thread.name} | {level} | "
                               "{module} : {function}:{line} -  {message}"
-                    },
+                },
                 {
                     "sink": self.log_dir / 'fastapi-error.log',
                     "serialize": True,
@@ -156,6 +159,6 @@ class Settings(BaseSettings):
                     "encoding": 'utf-8',
                     "format": "{time:YYYY-mm-dd HH:mm:ss.SSS} | {thread.name} | {level} | "
                               "{module} : {function}:{line} -  {message}"
-                    },
-                ],
-            }
+                },
+            ],
+        }
