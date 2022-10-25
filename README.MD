@@ -16,7 +16,7 @@
 
 [本项目演示站点](http://fastapi.rongli.vip)【账号 admin / 密码 a12345678 】
 
-[冰可乐大佬的演示站点](http://118.89.184.221)【账号: admin 密码:123456】 **本站点由小Q提供并管理**
+[冰可乐大佬的演示站点](http://110.42.206.160/)【账号: admin 密码:123456】 **本站点由小Q提供并管理**
 
 ## 技术交流群
 
@@ -25,6 +25,7 @@
 ![wechat](./docs/images/wechat.jpg)
 
 **如果二维码过期，可以通过各种途径通知我**
+**如果二维码过期，也可以去 issue 里面找找 [传送门](https://gitee.com/nhnhwsnh/fastapi_demo/issues)**
 
 # 二、快速上手
 
