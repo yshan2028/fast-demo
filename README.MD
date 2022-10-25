@@ -25,6 +25,7 @@
 ![wechat](./docs/images/wechat.jpg)
 
 **如果二维码过期，可以通过各种途径通知我**
+
 **如果二维码过期，也可以去 issue 里面找找 [传送门](https://gitee.com/nhnhwsnh/fastapi_demo/issues)**
 
 # 二、快速上手
