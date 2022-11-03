@@ -11,6 +11,7 @@ import sys
 
 import fastapi
 from fastapi import APIRouter
+from loguru import logger
 
 from backend.config import settings
 from backend.schemas import SuccessResp
@@ -20,6 +21,7 @@ router = APIRouter(prefix='/system', tags=['开发调试 - 系统配置'])
 
 @router.get('/time', summary='查看服务器时间')
 async def server_time():
+    logger.debug(f"{id(settings)=}")
     data = {'time': datetime.datetime.now()}
     return SuccessResp(data=data)
 

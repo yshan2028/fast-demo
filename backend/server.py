@@ -45,7 +45,7 @@ logger.debug(f"logger_name_list: {sorted(logger_name_list)}")
 # logger.error('error')
 # logger.critical('critical')
 
-
+logger.debug(f"{id(settings)=}")
 # 创建 FastAPI 对象
 app = FastAPI(debug=settings.debug,
               docs_url=None,
