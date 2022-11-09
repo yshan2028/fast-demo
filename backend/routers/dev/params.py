@@ -9,7 +9,7 @@
 import datetime
 from typing import Dict
 
-from fastapi import APIRouter, Cookie, File, Header, UploadFile
+from fastapi import APIRouter, Cookie, File, Form, Header, UploadFile
 
 from backend.config import settings
 from backend.schemas import SuccessResp
@@ -86,3 +86,9 @@ async def create_upload_file(myfile: UploadFile):
             "content_type": myfile.content_type,
             "file_url": file_url}
     return SuccessResp[Dict](data=data)
+
+
+@router.post("/form_file", summary="form和file一起使用")
+def form_file(file: UploadFile, name: str = Form(...), age: int = Form(...)):
+    data = {'name': name, "age": age}
+    return {"file": file.filename, "form": data}
