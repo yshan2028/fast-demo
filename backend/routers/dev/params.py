@@ -92,3 +92,20 @@ async def create_upload_file(myfile: UploadFile):
 def form_file(file: UploadFile, name: str = Form(...), age: int = Form(...)):
     data = {'name': name, "age": age}
     return {"file": file.filename, "form": data}
+
+# @router.post("/{echo_path:path}", summary="request 对象")
+# async def get_request(req: Request, echo_path: str):
+#     print(req)
+#     return {
+#         "path": echo_path,
+#         "base_url": req.base_url,
+#         "client": req.client,
+#         "cookies": req.cookies,
+#         "body": await req.body(),
+#         "headers": req.headers,
+#         "method": req.method,
+#         "path_params": req.path_params,
+#         "query_params": req.query_params,
+#         "scope": {k: str(v) for k, v in req.scope.items()},
+#         "url": req.url,
+#     }
