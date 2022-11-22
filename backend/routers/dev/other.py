@@ -12,7 +12,7 @@ import time
 from multiprocessing import Process
 
 from fastapi import APIRouter, Request
-from pydantic import validator
+from pydantic import BaseModel, validator
 
 from backend.decorators import auto_load_router
 from backend.schemas import ORMModel, SuccessResp
@@ -59,3 +59,13 @@ async def create_process():
 @auto_load_router(router, prefix="auto/load", table_name_list=['aaa', 'bbb', 'ccc'])
 def home(req: Request):
     return {"url_path": req.url.path}
+
+
+class BigNumber(BaseModel):
+    big_num: str
+
+
+@router.get("/big_number", summary="越长的数字", response_model=BigNumber)
+def big_number():
+    big_num = 12345678901234567890
+    return {'big_num': big_num}
