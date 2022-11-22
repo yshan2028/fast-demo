@@ -79,14 +79,14 @@ class Settings(BaseSettings):
     allowed_hosts = ["*"]
 
     # 数据库
-    mysql_host: str
-    mysql_port: int
-    mysql_user: str
-    mysql_password: str
-    mysql_database: str
+    mysql_host: str = "localhost"
+    mysql_port: int = 13306
+    mysql_user: str = "root"
+    mysql_password: str = "123456"
+    mysql_database: str = "fa_demo"
 
     # redis
-    cache_redis_url: str
+    cache_redis_url: str = "redis://localhost:16379/0"
 
     # captcha
     # 图片验证码有效时间
@@ -95,7 +95,7 @@ class Settings(BaseSettings):
     captcha_key: str = 'captcha:{}'
 
     # jwt加密的盐
-    jwt_secret_key: str
+    jwt_secret_key: str = "lbrvwAwLCyyjkQKH"
     # jwt加密算法
     jwt_algorithm: str = 'HS256'
     # token过期时间，单位：秒
