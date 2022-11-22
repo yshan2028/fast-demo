@@ -43,7 +43,8 @@ class Settings(BaseSettings):
 
     #  swagger docs 的登陆重定向地址
     swagger_ui_oauth2_redirect_url: str = '/docs/oauth2-redirect'
-
+    # swagger docs 额外配置
+    swagger_ui_parameters: dict = {"docExpansion": None}
     # /docs 获取 token 的 url
     oauth2_token_url: str = url_prefix + "/test/auth/token"
 
