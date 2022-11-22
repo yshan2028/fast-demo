@@ -2,31 +2,16 @@
 
 > FastAPI 的小demo
 
-## 仓库地址
-
-感谢 **冰可乐** 大佬 [传送门](https://gitee.com/binkuolo/fastapi.git)
+## 仓库地
 
 [后端代码仓库](https://gitee.com/nhnhwsnh/fastapi_demo)
 
 [前端代码仓库](https://gitee.com/nhnhwsnh/vben_admin_demo)
 
-[FastAPI 快速上手指南 - Bilibili视频](https://www.bilibili.com/video/BV1je4y1o7yX?vd_source=9f8f3da95270c6c4d6bafbe8da14beee)
 
 ## 演示站点
 
 [本项目演示站点](http://fastapi.rongli.vip)【账号 admin / 密码 a12345678 】
-
-[冰可乐大佬的演示站点](http://110.42.206.160/)【账号: admin 密码:123456】 **本站点由小Q提供并管理**
-
-## 技术交流群
-
-> 本群啥都可以聊Python，fastapi，js，vue，运维，数据库，人生，未来，感情.....，严禁开车，严禁广告，一次警告，两次拜拜！
-
-![wechat](./docs/images/wechat.jpg)
-
-**如果二维码过期，可以通过各种途径通知我**
-
-**如果二维码过期，也可以去 issue 里面找找 [传送门](https://gitee.com/nhnhwsnh/fastapi_demo/issues)**
 
 # 二、快速上手
 
